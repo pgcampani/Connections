@@ -17,7 +17,12 @@ public class NetworkUtils{
     public static String NIOreceive(SocketChannel channel, ByteBuffer buffer) throws IOException{
         buffer.clear(); 
         StringBuilder sb = new StringBuilder(); 
-        channel.read(buffer);
+        int bytesRead = channel.read(buffer);
+
+        if(bytesRead == -1){
+            throw new IOException("Server disconnesso"); 
+        }
+
         buffer.flip();
         while(buffer.hasRemaining()){
             char c = (char) buffer.get(); 

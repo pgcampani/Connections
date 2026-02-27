@@ -52,7 +52,7 @@ public class ClientMain{
                 String input = scanner.nextLine().trim(); 
 
                 // Parsing dei comandi
-
+                if(input.isEmpty()) continue; 
                 // REGISTRAZIONE 
                 if(!is_registered){
                     if(input.equals("register")){
@@ -96,6 +96,9 @@ public class ClientMain{
                         System.out.println("Disconnessione...");
                         break; 
                     }
+                    else{
+                        System.out.println("Comando non riconosciuto. Comandi disponibili:\n> register\n> login\n> exit");
+                    }
                 }
                 else{
                     if(input.equals("register") || input.equals("login")){
@@ -106,14 +109,28 @@ public class ClientMain{
                     System.out.println("Disconnessione...");
                     break; 
                     }
+
+                    else if(input.equals("logout")){
+                        NetworkUtils.NIOsend(socketChannel, write_buffer, new LogoutMessage());
+
+                        String raw = NetworkUtils.NIOreceive(socketChannel, read_buffer); 
+                        RegisterResponse response = JsonUtils.GSON.fromJson(raw, RegisterResponse.class); 
+
+                        if(response.status.equals("OK")){
+                            System.out.println("Logged out successfully"); 
+                            is_registered = false; 
+                        }
+                        else{
+                            System.out.println("Errore nel logout"); 
+                        }
+
+                    }
                 }
             }
-
-
         }
         catch(IOException e){
             System.err.println("[CLIENT] Errore connessione: " + e.getMessage());
-            e.printStackTrace();
+            System.exit(0); 
         }
     }
 

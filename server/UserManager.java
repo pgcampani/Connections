@@ -1,9 +1,12 @@
 package server; 
 
 import com.google.gson.reflect.TypeToken; 
+
 import messages.JsonUtils; 
+
 import java.io.*; 
 import java.lang.reflect.Type; 
+import java.security.cert.PKIXBuilderParameters;
 import java.util.concurrent.ConcurrentHashMap; 
 
 public class UserManager{
@@ -25,8 +28,7 @@ public class UserManager{
         return true; 
     }
 
-    public String login(String username, String password){
-        // No synchronized perché facciamo solo lettura        
+    public synchronized String login(String username, String password){
         
         if(!users.containsKey(username)){
             return "USER_NOT_FOUND"; 
@@ -44,10 +46,17 @@ public class UserManager{
         return "OK"; 
     }
 
-    public void logout(String username){
+    public synchronized void logout(String username){
         User user = getUser(username); 
         user.currentGameid = -1;
         user.isLogged = false; 
+    }
+
+    public synchronized void logoutAll(){
+        for(User user : users.values()){
+            user.isLogged = false;
+            user.currentGameid = -1; 
+        }
     }
 
     private void loadUsers(){

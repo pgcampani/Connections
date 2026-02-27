@@ -15,27 +15,29 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-import java.nio.channels.NetworkChannel;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientHandler implements Runnable{
 
     private final Socket clientSocket;
     private final UserManager userManager; 
 
-    public ClientHandler(Socket socket, UserManager userManager) {
+    public ClientHandler(Socket socket, UserManager userManager){
         this.clientSocket = socket;
         this.userManager = userManager; 
-    }
+    }   
 
     @Override
     public void run(){
+
+        String loggedUsername = null; 
+
         try(Socket socket = clientSocket;
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream(), "UTF-8")), true);
         ){
             String message;
-            System.out.println("[CLIENT HANDLER]: Siamo nel client handler"); 
-            
+
             while((message = NetworkUtils.TCPreceive(in)) != null){
                 String operation = JsonParser.parseString(message).getAsJsonObject().get("operation").getAsString(); 
                 switch(operation){
@@ -44,7 +46,12 @@ public class ClientHandler implements Runnable{
                         break; 
                     
                     case "login":
-                        handleLogin(message, out); 
+                        loggedUsername = handleLogin(message, out); 
+                        break; 
+                    
+                    case "logout": 
+                        handleLogout(loggedUsername, out); 
+                        loggedUsername = null; 
                         break; 
                     
                     default: 
@@ -60,6 +67,12 @@ public class ClientHandler implements Runnable{
         catch (IOException e){
             e.printStackTrace();
         }
+        finally{
+            if(loggedUsername != null){
+                userManager.logout(loggedUsername); 
+                System.out.println("Logout automatico effettuato per " + loggedUsername); 
+            }
+        }
     }
 
     private void handleRegister(String message, PrintWriter out){
@@ -69,25 +82,37 @@ public class ClientHandler implements Runnable{
             NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Registrazione avvenuta con successo"));
         }
         else{
-            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Username gia' registrato"));
+            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Username occupato"));
         }
     }
 
-    private void handleLogin(String message, PrintWriter out){
+    private String handleLogin(String message, PrintWriter out){
         LoginMessage request = JsonUtils.GSON.fromJson(message, LoginMessage.class);
         String result = userManager.login(request.username.trim(), request.password.trim()); 
 
        switch(result){
         case "OK": 
             NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Login effettuato con successo"));
-            break; 
+            return request.username.trim(); 
         
         case "USER_NOT_FOUND": 
             NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Utente inesistente"));
-            break; 
+            break;
 
         case "WRONG_PASSWORD": 
             NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Password errata"));
+            break; 
        }
+
+       return null; 
+    }
+
+    private void handleLogout(String loggedUsername, PrintWriter out){
+        if(loggedUsername == null){
+            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Nessun utente loggato"));
+            return; 
+        }
+        userManager.logout(loggedUsername); 
+        NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Logout avvenuto con successo"));
     }
 }
