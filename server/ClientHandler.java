@@ -4,8 +4,8 @@ import com.google.gson.JsonParser;
 
 import messages.JsonUtils; 
 import messages.NetworkUtils; 
-import messages.responses.RegisterResponse; 
-import messages.requests.RegisterMessage;
+import messages.responses.*; 
+import messages.requests.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,9 +20,11 @@ import java.nio.channels.NetworkChannel;
 public class ClientHandler implements Runnable{
 
     private final Socket clientSocket;
+    private final UserManager userManager; 
 
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, UserManager userManager) {
         this.clientSocket = socket;
+        this.userManager = userManager; 
     }
 
     @Override
@@ -39,6 +41,10 @@ public class ClientHandler implements Runnable{
                 switch(operation){
                     case "register": 
                         handleRegister(message, out); 
+                        break; 
+                    
+                    case "login":
+                        handleLogin(message, out); 
                         break; 
                     
                     default: 
@@ -59,8 +65,29 @@ public class ClientHandler implements Runnable{
     private void handleRegister(String message, PrintWriter out){
         RegisterMessage request = JsonUtils.GSON.fromJson(message, RegisterMessage.class);
 
-        System.out.println("Registrazione: " + request.name); 
+        if(userManager.register(request.name.trim(), request.password.trim())){
+            NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Registrazione avvenuta con successo"));
+        }
+        else{
+            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Username gia' registrato"));
+        }
+    }
 
-        NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Registrazione avvenuta con successo!")); 
+    private void handleLogin(String message, PrintWriter out){
+        LoginMessage request = JsonUtils.GSON.fromJson(message, LoginMessage.class);
+        String result = userManager.login(request.username.trim(), request.password.trim()); 
+
+       switch(result){
+        case "OK": 
+            NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Login effettuato con successo"));
+            break; 
+        
+        case "USER_NOT_FOUND": 
+            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Utente inesistente"));
+            break; 
+
+        case "WRONG_PASSWORD": 
+            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Password errata"));
+       }
     }
 }

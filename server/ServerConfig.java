@@ -9,7 +9,9 @@ public class ServerConfig{
     private int udp_port; 
     private int poolSize; 
     private int gameDuration; 
-    private String connectionsData; 
+    private String connectionsData;
+    private String usersFile;  
+    private int persistenceInterval; 
 
     public static ServerConfig load(String path){
         ServerConfig config = new ServerConfig(); 
@@ -23,6 +25,8 @@ public class ServerConfig{
             config.poolSize = Integer.parseInt(props.getProperty("server.threadpool.size"));
             config.gameDuration = Integer.parseInt(props.getProperty("server.game.duration"));
             config.connectionsData = props.getProperty("server.connections.data");
+            config.usersFile = props.getProperty("server.users.file"); 
+            config.persistenceInterval = Integer.parseInt(props.getProperty("server.persistence.interval")); 
         }
         catch(IOException e){
             e.printStackTrace();
@@ -49,6 +53,14 @@ public class ServerConfig{
 
     public String getConnectionsData(){
         return connectionsData;
+    }
+
+    public String getUsersFile(){
+        return usersFile; 
+    }
+
+    public int getPersistenceInterval(){
+        return persistenceInterval; 
     }
 }
 

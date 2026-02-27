@@ -1,8 +1,8 @@
 package client; 
 
 import messages.JsonUtils;
-import messages.requests.RegisterMessage; 
-import messages.responses.RegisterResponse;
+import messages.requests.*; 
+import messages.responses.*;
 import messages.NetworkUtils; 
 
 import java.io.FileInputStream;
@@ -74,20 +74,37 @@ public class ClientMain{
                         }
                     }
                     else if(input.equals("login")){
+
                         System.out.print("Username ");
                         String username = scanner.nextLine(); 
                         System.out.print("Password "); 
                         String password = scanner.nextLine();  
 
-                        // Se mi arriva ok dal server - login accettato sono sia registrato che connesso
-                        is_registered = true; 
-                        //is_connected = true; 
+                        NetworkUtils.NIOsend(socketChannel, write_buffer, new LoginMessage(username, password));
+                        String raw = NetworkUtils.NIOreceive(socketChannel, read_buffer);
+                        RegisterResponse response = JsonUtils.GSON.fromJson(raw, RegisterResponse.class);
+
+                        if(response.status.equals("OK")){
+                            is_registered = true; 
+                            System.out.println("Login success! " + response.message);
+                        }
+                        else{
+                            System.out.println("Errore: " + response.message);
+                        }
+                    }
+                    else if(input.equals("exit")){
+                        System.out.println("Disconnessione...");
+                        break; 
                     }
                 }
                 else{
                     if(input.equals("register") || input.equals("login")){
                         // Ho già fatto login o registrazione -> sono pronto per giocare
                         System.out.println("Utente già connesso"); 
+                    }
+                    else if(input.equals("exit")){
+                    System.out.println("Disconnessione...");
+                    break; 
                     }
                 }
             }
