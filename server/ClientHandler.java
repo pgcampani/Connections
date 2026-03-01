@@ -17,6 +17,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import jdk.jshell.TypeDeclSnippet;
+
 public class ClientHandler implements Runnable{
 
     private final Socket clientSocket;
@@ -39,10 +41,12 @@ public class ClientHandler implements Runnable{
             String message;
 
             while((message = NetworkUtils.TCPreceive(in)) != null){
+
                 String operation = JsonParser.parseString(message).getAsJsonObject().get("operation").getAsString(); 
+
                 switch(operation){
                     case "register": 
-                        handleRegister(message, out); 
+                        loggedUsername = handleRegister(message, out); 
                         break; 
                     
                     case "login":
@@ -55,7 +59,8 @@ public class ClientHandler implements Runnable{
                         break; 
                     
                     default: 
-                        NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Operazione non riconosciuta")); 
+                        NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Operazione non riconosciuta")); 
+                        break; 
                 }
             }
 
@@ -75,14 +80,17 @@ public class ClientHandler implements Runnable{
         }
     }
 
-    private void handleRegister(String message, PrintWriter out){
+    private String handleRegister(String message, PrintWriter out){
         RegisterMessage request = JsonUtils.GSON.fromJson(message, RegisterMessage.class);
 
         if(userManager.register(request.name.trim(), request.password.trim())){
-            NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Registrazione avvenuta con successo"));
+            userManager.login(request.name.trim(), request.password.trim()); 
+            NetworkUtils.TCPsend(out, new ServerResponse("OK", "Registrazione avvenuta con successo"));
+            return request.name.trim(); 
         }
         else{
-            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Username occupato"));
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Username occupato"));
+            return null; 
         }
     }
 
@@ -92,15 +100,19 @@ public class ClientHandler implements Runnable{
 
        switch(result){
         case "OK": 
-            NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Login effettuato con successo"));
+            NetworkUtils.TCPsend(out, new ServerResponse("OK", "Login effettuato con successo"));
             return request.username.trim(); 
         
         case "USER_NOT_FOUND": 
-            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Utente inesistente"));
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Utente inesistente"));
             break;
 
         case "WRONG_PASSWORD": 
-            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Password errata"));
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Password errata"));
+            break; 
+
+        case "USER_ALREADY_LOGGED":
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Utente gia' connesso"));
             break; 
        }
 
@@ -109,10 +121,10 @@ public class ClientHandler implements Runnable{
 
     private void handleLogout(String loggedUsername, PrintWriter out){
         if(loggedUsername == null){
-            NetworkUtils.TCPsend(out, new RegisterResponse("ERROR", "Nessun utente loggato"));
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Nessun utente loggato"));
             return; 
         }
         userManager.logout(loggedUsername); 
-        NetworkUtils.TCPsend(out, new RegisterResponse("OK", "Logout avvenuto con successo"));
+        NetworkUtils.TCPsend(out, new ServerResponse("OK", "Logout avvenuto con successo"));
     }
 }

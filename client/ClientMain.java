@@ -1,17 +1,11 @@
 package client; 
 
-import messages.JsonUtils;
-import messages.requests.*; 
-import messages.responses.*;
-import messages.NetworkUtils; 
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -21,8 +15,6 @@ public class ClientMain{
     private static int server_udp_port;
     private static String server_host;  
     private static boolean is_registered = false; 
-    // private static boolean is_connected = false; 
-
     public static void main(String[] args){
         readConfig("config/ClientConfig.properties");
 
@@ -55,75 +47,47 @@ public class ClientMain{
                 if(input.isEmpty()) continue; 
                 // REGISTRAZIONE 
                 if(!is_registered){
-                    if(input.equals("register")){
-                        System.out.print("Username ");
-                        String username = scanner.nextLine(); 
-                        System.out.print("Password "); 
-                        String password = scanner.nextLine(); 
+                    switch(input){
+                        case "register":
+                            is_registered = ClientCommands.handleRegister(scanner, socketChannel, write_buffer, read_buffer);
+                            break;
+                        
+                        case "login": 
+                            is_registered = ClientCommands.handleLogin(scanner, socketChannel, write_buffer, read_buffer);
+                            break; 
+                        
+                        case "exit":
+                            System.out.println("Disconnessione...");
+                            return;
 
-                        NetworkUtils.NIOsend(socketChannel, write_buffer, new RegisterMessage(username, password));
-                        String raw = NetworkUtils.NIOreceive(socketChannel, read_buffer); 
-                        RegisterResponse response = JsonUtils.GSON.fromJson(raw, RegisterResponse.class);
-
-                        if(response.status.equals("OK")){
-                            is_registered = true;
-                            System.out.println("Utente registrato " + response.message); 
-                        }
-                        else{
-                            System.out.println("Errore: " + response.message);
-                        }
-                    }
-                    else if(input.equals("login")){
-
-                        System.out.print("Username ");
-                        String username = scanner.nextLine(); 
-                        System.out.print("Password "); 
-                        String password = scanner.nextLine();  
-
-                        NetworkUtils.NIOsend(socketChannel, write_buffer, new LoginMessage(username, password));
-                        String raw = NetworkUtils.NIOreceive(socketChannel, read_buffer);
-                        RegisterResponse response = JsonUtils.GSON.fromJson(raw, RegisterResponse.class);
-
-                        if(response.status.equals("OK")){
-                            is_registered = true; 
-                            System.out.println("Login success! " + response.message);
-                        }
-                        else{
-                            System.out.println("Errore: " + response.message);
-                        }
-                    }
-                    else if(input.equals("exit")){
-                        System.out.println("Disconnessione...");
-                        break; 
-                    }
-                    else{
-                        System.out.println("Comando non riconosciuto. Comandi disponibili:\n> register\n> login\n> exit");
+                        default:
+                            System.out.println("Comando non valido");
+                            break; 
                     }
                 }
                 else{
-                    if(input.equals("register") || input.equals("login")){
-                        // Ho già fatto login o registrazione -> sono pronto per giocare
-                        System.out.println("Utente già connesso"); 
-                    }
-                    else if(input.equals("exit")){
-                    System.out.println("Disconnessione...");
-                    break; 
-                    }
+                    switch(input){
+                        case "register":
+                            System.out.println("Utente già registrato"); 
+                            break;
+                        
+                        case "login":   
+                            System.out.println("Utente già loggato");
+                            break;
 
-                    else if(input.equals("logout")){
-                        NetworkUtils.NIOsend(socketChannel, write_buffer, new LogoutMessage());
-
-                        String raw = NetworkUtils.NIOreceive(socketChannel, read_buffer); 
-                        RegisterResponse response = JsonUtils.GSON.fromJson(raw, RegisterResponse.class); 
-
-                        if(response.status.equals("OK")){
-                            System.out.println("Logged out successfully"); 
-                            is_registered = false; 
-                        }
-                        else{
-                            System.out.println("Errore nel logout"); 
-                        }
-
+                        case "logout": 
+                            if(ClientCommands.handleLogout(scanner, socketChannel, write_buffer, read_buffer)){
+                                is_registered = false; 
+                            } 
+                            break;
+                        
+                        case "exit":
+                            System.out.println("Disconnessione..."); 
+                            return; 
+                        
+                        default: 
+                            System.out.println("Comando non valido"); 
+                            break; 
                     }
                 }
             }

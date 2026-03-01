@@ -40,7 +40,7 @@ public class UserManager{
             return "WRONG_PASSWORD"; 
         }
         if(user.isLogged){
-            return "USER ALREADY LOGGED"; 
+            return "USER_ALREADY_LOGGED"; 
         }
         user.isLogged = true; 
         return "OK"; 
