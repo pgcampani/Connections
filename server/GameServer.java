@@ -1,16 +1,14 @@
 package server;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class GameServer {
+public class GameServer{
     private final ServerConfig config;
     private ExecutorService threadPool;
     private ScheduledExecutorService scheduler; 
@@ -34,11 +32,10 @@ public class GameServer {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
             @Override
             public void run(){
-
                 userManager.logoutAll();
                 userManager.saveUsers();
                 threadPool.shutdown();
-                scheduler.shutdown(); 
+                scheduler.shutdown();
                 System.out.println("Chiusura server terminata");
             }
         }));
@@ -55,8 +52,8 @@ public class GameServer {
             e.printStackTrace();
         }
         finally{
-            threadPool.shutdown(); 
-            scheduler.shutdown();
+            if(!threadPool.isShutdown()) threadPool.shutdown(); 
+            if(!scheduler.isShutdown()) scheduler.shutdown();
         }
     }
 }

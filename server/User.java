@@ -6,8 +6,8 @@ public class User{
     public int totalScore; 
     public int gamesPlayed; 
     public int gamesWon; 
-    public int currentGameid; 
-    public boolean  isLogged; 
+    public transient int currentGameid; 
+    public transient boolean isLogged; 
 
     public User(String password){
         this.password = password; 

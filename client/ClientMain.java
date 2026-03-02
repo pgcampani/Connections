@@ -14,7 +14,7 @@ public class ClientMain{
     private static int server_tcp_port; 
     private static int server_udp_port;
     private static String server_host;  
-    private static boolean is_registered = false; 
+    private static boolean is_logged = false; 
     public static void main(String[] args){
         readConfig("config/ClientConfig.properties");
 
@@ -46,14 +46,14 @@ public class ClientMain{
                 // Parsing dei comandi
                 if(input.isEmpty()) continue; 
                 // REGISTRAZIONE 
-                if(!is_registered){
+                if(!is_logged){
                     switch(input){
                         case "register":
-                            is_registered = ClientCommands.handleRegister(scanner, socketChannel, write_buffer, read_buffer);
+                            is_logged = ClientCommands.handleRegister(scanner, socketChannel, write_buffer, read_buffer);
                             break;
                         
                         case "login": 
-                            is_registered = ClientCommands.handleLogin(scanner, socketChannel, write_buffer, read_buffer);
+                            is_logged = ClientCommands.handleLogin(scanner, socketChannel, write_buffer, read_buffer);
                             break; 
                         
                         case "exit":
@@ -76,12 +76,13 @@ public class ClientMain{
                             break;
 
                         case "logout": 
-                            if(ClientCommands.handleLogout(scanner, socketChannel, write_buffer, read_buffer)){
-                                is_registered = false; 
+                            if(ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer)){
+                                is_logged = false; 
                             } 
                             break;
                         
                         case "exit":
+                            ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 
                             System.out.println("Disconnessione..."); 
                             return; 
                         

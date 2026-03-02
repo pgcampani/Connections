@@ -50,7 +50,7 @@ public class ClientCommands{
         }
     }
 
-    public static boolean handleLogout(Scanner scanner, SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
+    public static boolean handleLogout(SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
         NetworkUtils.NIOsend(socketChannel, write_b, new LogoutMessage());
 
         String raw = NetworkUtils.NIOreceive(socketChannel, read_b); 

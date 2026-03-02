@@ -18,44 +18,58 @@ public class UserManager{
         loadUsers(); 
     }
 
-    public synchronized boolean register(String username, String password){
-        if(users.containsKey(username)){
-            // Nome utente occupato
-            return false;
+    public boolean register(String username, String password){
+        
+        User newUser = new User(password); 
+
+        User existing = users.putIfAbsent(username, newUser);
+
+        if(existing != null){
+            // username già registrato
+            return false; 
         }
-        users.put(username, new User(password)); 
         saveUsers(); // Salvo immediatamente l'utente nel file JSON
         return true; 
     }
 
-    public synchronized String login(String username, String password){
+    public String login(String username, String password){
         
-        if(!users.containsKey(username)){
+        User user = users.get(username); 
+
+        if(user == null){
             return "USER_NOT_FOUND"; 
         }
 
-        User user = getUser(username); 
+        synchronized(user){
+            if(user.isLogged){
+                return "USER_ALREADY_LOGGED"; 
+            }
+            if(!user.password.equals(password)){
+                return "WRONG_PASSWORD"; 
+            }
+            user.isLogged = true; 
+        }
 
-        if(!users.get(username).password.equals(password)){
-            return "WRONG_PASSWORD"; 
-        }
-        if(user.isLogged){
-            return "USER_ALREADY_LOGGED"; 
-        }
-        user.isLogged = true; 
         return "OK"; 
     }
 
-    public synchronized void logout(String username){
-        User user = getUser(username); 
-        user.currentGameid = -1;
-        user.isLogged = false; 
+    public void logout(String username){
+        User user = users.get(username); 
+
+        if(user == null) return; 
+
+        synchronized (user){
+            user.currentGameid = -1;
+            user.isLogged = false;  
+        }
     }
 
-    public synchronized void logoutAll(){
+    public void logoutAll(){
         for(User user : users.values()){
-            user.isLogged = false;
-            user.currentGameid = -1; 
+            synchronized(user){
+                user.isLogged = false;
+                user.currentGameid = -1; 
+            }
         }
     }
 
