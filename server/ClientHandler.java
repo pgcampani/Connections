@@ -58,6 +58,10 @@ public class ClientHandler implements Runnable{
                         loggedUsername = null; 
                         break; 
                     
+                    case "update_credential":
+                        loggedUsername = handleUpdateCredential(loggedUsername, message, out);
+                        break; 
+                    
                     default: 
                         NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Operazione non riconosciuta")); 
                         break; 
@@ -114,6 +118,9 @@ public class ClientHandler implements Runnable{
         case "USER_ALREADY_LOGGED":
             NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Utente gia' connesso"));
             break; 
+                
+        default: 
+            break; 
        }
 
        return null; 
@@ -126,5 +133,47 @@ public class ClientHandler implements Runnable{
         }
         userManager.logout(loggedUsername); 
         NetworkUtils.TCPsend(out, new ServerResponse("OK", "Logout avvenuto con successo"));
+    }
+
+    private String handleUpdateCredential(String loggedUsername, String message, PrintWriter out){
+        UpdateCredentialMessage request = JsonUtils.GSON.fromJson(message, UpdateCredentialMessage.class);
+
+        if(loggedUsername != null && !loggedUsername.equals(request.old_username)){
+            NetworkUtils.TCPsend(out, new ServerResponse("Error", "Non puoi modificare le credenziali di un altro utente"));
+            return loggedUsername; 
+        }
+
+        String result = userManager.updateCredential(loggedUsername, request.old_username, request.old_psw, request.new_username, request.new_psw);
+
+        switch(result){
+            case "OK":
+                NetworkUtils.TCPsend(out, new ServerResponse("OK", "Credenziali aggiornate"));
+                if(request.new_username != null){
+                    return request.new_username;
+                }
+                else{
+                    return loggedUsername; 
+                }
+
+            case "WRONG_PASSWORD":
+                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Password errata"));
+                break;
+
+            case "USERNAME_TAKEN":
+                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Username occupato"));
+                break; 
+
+            case "USER_NOT_FOUND":
+                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Username inesistente"));
+                break;
+
+            case "USER_ALREADY_LOGGED":
+                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Utente gia' loggato"));
+
+            default:
+                break;
+        }
+
+        return loggedUsername; 
     }
 }

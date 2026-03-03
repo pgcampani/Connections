@@ -49,11 +49,11 @@ public class UserManager{
             }
             user.isLogged = true; 
         }
-
         return "OK"; 
     }
 
     public void logout(String username){
+        System.out.print("richiesto logout");
         User user = users.get(username); 
 
         if(user == null) return; 
@@ -71,6 +71,54 @@ public class UserManager{
                 user.currentGameid = -1; 
             }
         }
+    }
+
+
+    public String updateCredential(String loggedUsername, String old_username, String old_psw, String new_username, String new_psw){
+        
+        synchronized(this){
+            // lock mappa
+            User user = users.get(old_username); 
+
+            if(user == null){
+                return "USER_NOT_FOUND"; 
+            }
+
+            synchronized(user){
+                // lock utente
+
+                if(user.isLogged && !old_username.equals(loggedUsername)) return "USER_ALREADY_LOGGED";
+
+                if(!user.password.equals(old_psw)){
+                    return "WRONG_PASSWORD";
+                }
+
+                if(new_username == null || new_username.equals(old_username) && new_psw != null){
+                    user.password = new_psw; 
+                }
+                else if(new_username != null && new_psw == null){
+                    User existing = users.putIfAbsent(new_username, user);
+                    if(existing != null){
+                        return "USERNAME_TAKEN";
+                    }
+                    users.remove(old_username);
+                }
+                else if(new_username != null && new_psw != null){
+                    User existing = users.putIfAbsent(new_username, user);
+                    if(existing != null){
+                        return "USERNAME_TAKEN";
+                    }
+                    user.password = new_psw;
+                    users.remove(old_username);
+                }
+                
+                else{
+                    return "NO_UPDATE"; 
+                }
+            }
+        }
+        saveUsers();
+        return "OK"; 
     }
 
     private void loadUsers(){

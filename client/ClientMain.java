@@ -56,6 +56,10 @@ public class ClientMain{
                             is_logged = ClientCommands.handleLogin(scanner, socketChannel, write_buffer, read_buffer);
                             break; 
                         
+                        case "update credential":
+                            ClientCommands.updateCredential(scanner, socketChannel, write_buffer, read_buffer);
+                            break; 
+                        
                         case "exit":
                             System.out.println("Disconnessione...");
                             return;
@@ -80,6 +84,10 @@ public class ClientMain{
                                 is_logged = false; 
                             } 
                             break;
+                        
+                        case "update credential":
+                            ClientCommands.updateCredential(scanner, socketChannel, write_buffer, read_buffer);
+                            break; 
                         
                         case "exit":
                             ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 
