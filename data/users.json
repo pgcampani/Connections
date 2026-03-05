@@ -1,1 +1,1 @@
-{"magi":{"password":"cavallo","totalScore":0,"gamesPlayed":0,"gamesWon":0,"currentGameState":{"gameId":0,"errors":0,"score":0,"finished":false,"correctGroups":[]}},"piggi":{"password":"pollo","totalScore":0,"gamesPlayed":0,"gamesWon":0,"currentGameState":{"gameId":0,"errors":0,"score":0,"finished":false,"correctGroups":[]}}}
+{"piggi":{"password":"pollo","totalScore":0,"gamesPlayed":0,"gamesWon":0,"currentGameState":{"gameId":1,"errors":1,"score":-4,"finished":false,"correctGroups":[]}}}

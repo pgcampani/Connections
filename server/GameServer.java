@@ -1,6 +1,8 @@
 package server;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.File; 
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +11,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import server.game.GameManager;
+import messages.JsonUtils;
+import server.game.GameManagerState;
 
 public class GameServer{
     private final ServerConfig config;
@@ -25,10 +29,24 @@ public class GameServer{
         int persistenceInterval = config.getPersistenceInterval(); 
         int gameDuration = config.getGameDuration(); 
         UserManager userManager = new UserManager(config.getUsersFile()); 
+        
+        int nextGameIndex = 0;
+        File stateFile = new File(config.getGameStateFile());
+        if(stateFile.exists()){
+            try(FileReader reader = new FileReader(stateFile)){
+                GameManagerState state = JsonUtils.GSON.fromJson(reader, GameManagerState.class);
+                if(state != null){
+                    nextGameIndex = state.nextGameIndex; 
+                }
+            }
+            catch(IOException e){
+                    e.printStackTrace();
+            }
+        }
 
         GameManager gameManager;
         try {
-            gameManager = new GameManager(userManager, config.getConnectionsData(),gameDuration);
+            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex);
             gameManager.start();
         }
         catch(IOException e){
@@ -39,16 +57,24 @@ public class GameServer{
         threadPool = Executors.newFixedThreadPool(threadPoolSize);
 
         scheduler = Executors.newScheduledThreadPool(1); 
-        scheduler.scheduleAtFixedRate(new PersistenceTask(userManager), persistenceInterval, persistenceInterval, TimeUnit.SECONDS); 
-
+        scheduler.scheduleAtFixedRate(new PersistenceTask(userManager,gameManager, config.getGameStateFile()), persistenceInterval, persistenceInterval, TimeUnit.SECONDS); 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
             @Override
             public void run(){
-                userManager.logoutAll();
-                userManager.saveUsers();
                 threadPool.shutdown();
                 scheduler.shutdown();
                 gameManager.stop(); 
+                try{
+                    if(!threadPool.awaitTermination(10, TimeUnit.SECONDS)) threadPool.shutdownNow();
+                    if(!scheduler.awaitTermination(5, TimeUnit.SECONDS)) scheduler.shutdownNow();
+                } catch(InterruptedException e){
+                    threadPool.shutdownNow();
+                    scheduler.shutdownNow();
+                    Thread.currentThread().interrupt();
+                }
+                userManager.logoutAll();
+                userManager.saveUsers();
+                gameManager.saveState(config.getGameStateFile()); // salva stato finale
                 System.out.println("Chiusura server terminata");
             }
         }));

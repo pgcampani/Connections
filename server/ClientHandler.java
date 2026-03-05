@@ -187,8 +187,48 @@ public class ClientHandler implements Runnable{
     }
 
     private void handleProposal(String loggedUsername, String message, PrintWriter out){
-        SubmitProposalMessage proposalMessage = JsonUtils.GSON.fromJson(message, SubmitProposalMessage.class); 
-
         
+        if(loggedUsername == null){
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Devi essere loggato"));
+            return;
+        }
+
+        SubmitProposalMessage proposalMessage = JsonUtils.GSON.fromJson(message, SubmitProposalMessage.class); 
+        String result = gameManager.submitProposal(loggedUsername, proposalMessage.words);
+
+        switch(result){
+            case "CORRECT":
+            NetworkUtils.TCPsend(out, new ServerResponse("OK", "Proposta corretta!"));
+            break;
+
+            case "WON":
+                NetworkUtils.TCPsend(out, new ServerResponse("OK", "Hai vinto la partita!"));
+                break;
+
+            case "WRONG":
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Proposta sbagliata"));
+                break;
+
+            case "LOST":
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Hai perso la partita!"));
+                break;
+
+            case "INVALID_PROPOSAL":
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Proposta non valida"));
+                break;
+
+            case "NO_GAME":
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Nessuna partita in corso"));
+                break;
+
+            case "GAME_FINISHED":
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Hai già terminato questa partita"));
+                break;
+
+            default:
+                break;
+
+        }
+
     }
 }
