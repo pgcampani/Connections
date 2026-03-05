@@ -1,4 +1,6 @@
-package server; 
+package server;
+
+import server.game.PlayerGameState; 
 
 public class User{
     public String username;
@@ -6,6 +8,7 @@ public class User{
     public int totalScore; 
     public int gamesPlayed; 
     public int gamesWon; 
+    public PlayerGameState currentGameState; 
     public transient int currentGameid; 
     public transient boolean isLogged; 
 
@@ -16,5 +19,6 @@ public class User{
         this.gamesWon = 0; 
         this.currentGameid = -1;  // Non sta giocando
         this.isLogged = false; 
+        this.currentGameState = null; 
     }
 }

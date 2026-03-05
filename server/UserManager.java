@@ -86,7 +86,7 @@ public class UserManager{
 
             synchronized(user){
                 // lock utente
-
+                
                 if(user.isLogged && !old_username.equals(loggedUsername)) return "USER_ALREADY_LOGGED";
 
                 if(!user.password.equals(old_psw)){

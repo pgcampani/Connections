@@ -45,11 +45,11 @@ public class ClientMain{
 
                 // Parsing dei comandi
                 if(input.isEmpty()) continue; 
-                // REGISTRAZIONE 
+                
                 if(!is_logged){
                     switch(input){
                         case "register":
-                            is_logged = ClientCommands.handleRegister(scanner, socketChannel, write_buffer, read_buffer);
+                            ClientCommands.handleRegister(scanner, socketChannel, write_buffer, read_buffer);
                             break;
                         
                         case "login": 
@@ -87,6 +87,10 @@ public class ClientMain{
                         
                         case "update credential":
                             ClientCommands.updateCredential(scanner, socketChannel, write_buffer, read_buffer);
+                            break; 
+
+                        case "submit proposal":
+                            ClientCommands.submitProposal(scanner, socketChannel, write_buffer, read_buffer); 
                             break; 
                         
                         case "exit":

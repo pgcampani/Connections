@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import server.game.GameManager;
+
 public class GameServer{
     private final ServerConfig config;
     private ExecutorService threadPool;
@@ -21,8 +23,18 @@ public class GameServer{
         int tcp_port = config.getTcpPort();
         int threadPoolSize = config.getPoolSize();
         int persistenceInterval = config.getPersistenceInterval(); 
-
+        int gameDuration = config.getGameDuration(); 
         UserManager userManager = new UserManager(config.getUsersFile()); 
+
+        GameManager gameManager;
+        try {
+            gameManager = new GameManager(userManager, config.getConnectionsData(),gameDuration);
+            gameManager.start();
+        }
+        catch(IOException e){
+            System.err.println("Errore apertura file " + e.getMessage());
+            return; 
+        } 
 
         threadPool = Executors.newFixedThreadPool(threadPoolSize);
 
@@ -36,6 +48,7 @@ public class GameServer{
                 userManager.saveUsers();
                 threadPool.shutdown();
                 scheduler.shutdown();
+                gameManager.stop(); 
                 System.out.println("Chiusura server terminata");
             }
         }));
@@ -43,7 +56,7 @@ public class GameServer{
         try(ServerSocket serverSocket = new ServerSocket(tcp_port)){
             while(true){
                 Socket clientSocket = serverSocket.accept();    // bloccante
-                threadPool.execute(new ClientHandler(clientSocket, userManager));
+                threadPool.execute(new ClientHandler(clientSocket, userManager, gameManager));
 
                 System.out.println("Client " + clientSocket + " connesso"); 
             }

@@ -6,6 +6,7 @@ import messages.JsonUtils;
 import messages.NetworkUtils; 
 import messages.responses.*; 
 import messages.requests.*;
+import server.game.GameManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.channels.NetworkChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,10 +25,12 @@ public class ClientHandler implements Runnable{
 
     private final Socket clientSocket;
     private final UserManager userManager; 
+    private final GameManager gameManager; 
 
-    public ClientHandler(Socket socket, UserManager userManager){
+    public ClientHandler(Socket socket, UserManager userManager, GameManager gameManager){
         this.clientSocket = socket;
         this.userManager = userManager; 
+        this.gameManager = gameManager; 
     }   
 
     @Override
@@ -46,7 +50,7 @@ public class ClientHandler implements Runnable{
 
                 switch(operation){
                     case "register": 
-                        loggedUsername = handleRegister(message, out); 
+                        handleRegister(message, out); 
                         break; 
                     
                     case "login":
@@ -60,6 +64,10 @@ public class ClientHandler implements Runnable{
                     
                     case "update_credential":
                         loggedUsername = handleUpdateCredential(loggedUsername, message, out);
+                        break; 
+                    
+                    case "submit_proposal": 
+                        handleProposal(loggedUsername, message, out); 
                         break; 
                     
                     default: 
@@ -88,7 +96,6 @@ public class ClientHandler implements Runnable{
         RegisterMessage request = JsonUtils.GSON.fromJson(message, RegisterMessage.class);
 
         if(userManager.register(request.name.trim(), request.password.trim())){
-            userManager.login(request.name.trim(), request.password.trim()); 
             NetworkUtils.TCPsend(out, new ServerResponse("OK", "Registrazione avvenuta con successo"));
             return request.name.trim(); 
         }
@@ -105,6 +112,13 @@ public class ClientHandler implements Runnable{
        switch(result){
         case "OK": 
             NetworkUtils.TCPsend(out, new ServerResponse("OK", "Login effettuato con successo"));
+            GameInfoResponse gameInfo = gameManager.getGameInfo(request.username.trim()); 
+            if(gameInfo != null){
+                NetworkUtils.TCPsend(out, gameInfo);
+            }
+            else{
+                NetworkUtils.TCPsend(out, new GameInfoResponse("NO_GAME", "Nessuna partita in corso"));
+            }
             return request.username.trim(); 
         
         case "USER_NOT_FOUND": 
@@ -138,11 +152,6 @@ public class ClientHandler implements Runnable{
     private String handleUpdateCredential(String loggedUsername, String message, PrintWriter out){
         UpdateCredentialMessage request = JsonUtils.GSON.fromJson(message, UpdateCredentialMessage.class);
 
-        if(loggedUsername != null && !loggedUsername.equals(request.old_username)){
-            NetworkUtils.TCPsend(out, new ServerResponse("Error", "Non puoi modificare le credenziali di un altro utente"));
-            return loggedUsername; 
-        }
-
         String result = userManager.updateCredential(loggedUsername, request.old_username, request.old_psw, request.new_username, request.new_psw);
 
         switch(result){
@@ -175,5 +184,11 @@ public class ClientHandler implements Runnable{
         }
 
         return loggedUsername; 
+    }
+
+    private void handleProposal(String loggedUsername, String message, PrintWriter out){
+        SubmitProposalMessage proposalMessage = JsonUtils.GSON.fromJson(message, SubmitProposalMessage.class); 
+
+        
     }
 }

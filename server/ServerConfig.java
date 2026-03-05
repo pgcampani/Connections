@@ -27,6 +27,7 @@ public class ServerConfig{
             config.connectionsData = props.getProperty("server.connections.data");
             config.usersFile = props.getProperty("server.users.file"); 
             config.persistenceInterval = Integer.parseInt(props.getProperty("server.persistence.interval")); 
+            config.connectionsData = props.getProperty("server.words.file"); 
         }
         catch(IOException e){
             e.printStackTrace();
