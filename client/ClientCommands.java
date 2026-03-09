@@ -28,7 +28,7 @@ public class ClientCommands{
         ServerResponse response = JsonUtils.GSON.fromJson(raw, ServerResponse.class);
 
         if(response.status.equals("OK")){
-            System.out.println("Utente registrato " + response.message);
+            System.out.println(response.message);
         }
         else{
             System.out.println("Errore: " + response.message);
@@ -51,7 +51,7 @@ public class ClientCommands{
         ServerResponse response = JsonUtils.GSON.fromJson(raw, ServerResponse.class);
 
         if(response.status.equals("OK")){
-            System.out.println("Login success! " + response.message);
+            System.out.println(response.message);
 
             String infoRaw = NetworkUtils.NIOreceive(socketChannel, read_b);
             GameInfoResponse gameInfo = JsonUtils.GSON.fromJson(infoRaw, GameInfoResponse.class);
@@ -118,7 +118,7 @@ public class ClientCommands{
         ServerResponse response = JsonUtils.GSON.fromJson(raw, ServerResponse.class);
 
         if(response.status.equals("OK")){
-            System.out.println("Credenziali aggiornate " + response.message);
+            System.out.println(response.message);
         }
         else{
             System.out.println("Errore " + response.message);

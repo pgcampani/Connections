@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService; 
 import java.util.concurrent.TimeUnit;
 import java.io.FileWriter; 
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameManager{
     private final UserManager userManager; 
@@ -23,11 +24,15 @@ public class GameManager{
     private final int gameDuration; 
     private Game currentGame; 
     private List<String> shuffledWords; 
+    private ConcurrentHashMap<Integer, GameStats> gameStats = new ConcurrentHashMap<>(); 
 
-    public GameManager(UserManager userManager, String gameFile, int gameDuration , int startIndex) throws IOException{
+    public GameManager(UserManager userManager, String gameFile, int gameDuration , int startIndex, ConcurrentHashMap<Integer, GameStats> gameStats) throws IOException{
         this.userManager = userManager; 
         this.gameLoader = new GameLoader(gameFile, startIndex);
         this.gameDuration = gameDuration; 
+        if(gameStats != null){
+            this.gameStats = gameStats; 
+        }
     }
 
     public void start(){
@@ -35,7 +40,11 @@ public class GameManager{
     }
 
     private synchronized void startNewGame(){
-        try {
+
+        // Chiudo la partita precedente e aggiorna i valori dei giocatori
+        endGame(); 
+
+        try{
             Game game = gameLoader.loadNext();
             if(game == null){
                 System.out.println("Nessuna partita disponibile");
@@ -76,7 +85,7 @@ public class GameManager{
 
     public synchronized void saveState(String stateFile){
         try(FileWriter writer = new FileWriter(stateFile)){
-            JsonUtils.GSON.toJson(new GameManagerState(gameLoader.getNextGameIndex()), writer);
+            JsonUtils.GSON.toJson(new GameManagerState(gameLoader.getNextGameIndex(), gameStats), writer);
         } catch(IOException e){
             e.printStackTrace();
         }
@@ -101,6 +110,8 @@ public class GameManager{
         if(state == null || state.gameId != currentGame.gameId){
             state = new PlayerGameState(currentGame.gameId);
             user.currentGameState = state; 
+
+            gameStats.computeIfAbsent(currentGame.gameId, GameStats::new).addPlayer(); 
         }
 
         long timeRemaining = currentGame.endTime - System.currentTimeMillis(); 
@@ -176,12 +187,14 @@ public class GameManager{
         return "WRONG"; 
     }
 
-    private int getBonus(int correctCount){
-        switch(correctCount){
-            case 1: return 6;
-            case 2: return 6;
-            case 3: return 6;
-            default: return 0; 
+    public void endGame(){
+        if(currentGame == null){
+            return;
+        }
+        GameStats stats = gameStats.get(currentGame.gameId);
+        userManager.finalizeGame(currentGame.gameId, stats);
+        if(stats != null){
+            stats.conculded = true; 
         }
     }
 }

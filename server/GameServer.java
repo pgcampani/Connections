@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.io.File; 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import server.game.GameManager;
+import server.game.GameStats;
 import messages.JsonUtils;
 import server.game.GameManagerState;
 
@@ -31,7 +33,9 @@ public class GameServer{
         UserManager userManager = new UserManager(config.getUsersFile()); 
         
         int nextGameIndex = 0;
+        ConcurrentHashMap<Integer, GameStats> gameStats = null; 
         File stateFile = new File(config.getGameStateFile());
+
         if(stateFile.exists()){
             try(FileReader reader = new FileReader(stateFile)){
                 GameManagerState state = JsonUtils.GSON.fromJson(reader, GameManagerState.class);
@@ -46,7 +50,7 @@ public class GameServer{
 
         GameManager gameManager;
         try {
-            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex);
+            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex, gameStats);
             gameManager.start();
         }
         catch(IOException e){
@@ -72,6 +76,7 @@ public class GameServer{
                     scheduler.shutdownNow();
                     Thread.currentThread().interrupt();
                 }
+                gameManager.endGame(); 
                 userManager.logoutAll();
                 userManager.saveUsers();
                 gameManager.saveState(config.getGameStateFile()); // salva stato finale

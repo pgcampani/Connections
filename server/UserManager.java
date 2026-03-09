@@ -9,6 +9,9 @@ import java.lang.reflect.Type;
 import java.security.cert.PKIXBuilderParameters;
 import java.util.concurrent.ConcurrentHashMap; 
 
+import server.game.PlayerGameState;
+import server.game.GameStats; 
+
 public class UserManager{
     private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>(); 
     private final String usersFile; 
@@ -53,7 +56,6 @@ public class UserManager{
     }
 
     public void logout(String username){
-        System.out.print("richiesto logout");
         User user = users.get(username); 
 
         if(user == null) return; 
@@ -127,7 +129,7 @@ public class UserManager{
 
         try(FileReader reader = new FileReader(file)){
             Type type = new TypeToken<ConcurrentHashMap<String, User>>(){}.getType(); 
-            // JSON -> ConcurrentHashMap
+            
             ConcurrentHashMap<String, User> loaded = JsonUtils.GSON.fromJson(reader, type); 
             
             // Se il file non è vuoto scrivi nella mappa
@@ -148,6 +150,27 @@ public class UserManager{
         catch(IOException e){
             e.printStackTrace(); 
         }
+    }
+
+    public synchronized void finalizeGame(int gameId, GameStats stats){
+        for(User user: users.values()){
+            PlayerGameState state = user.currentGameState;
+            if(state != null && state.gameId == gameId){
+                user.totalScore += state.score; 
+                user.gamesPlayed++; 
+                if(state.hasWon()){
+                    user.gamesWon++; 
+                }
+
+                // aggiorna statische partita
+                if(stats != null){
+                    stats.finalizePlayer(state.hasWon(), state.score);
+                }
+                // reset valori
+                user.currentGameState = null; 
+            }
+        }
+        saveUsers();
     }
 
     public User getUser(String username){
