@@ -16,7 +16,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-import java.nio.channels.NetworkChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,6 +68,10 @@ public class ClientHandler implements Runnable{
                     case "submit_proposal": 
                         handleProposal(loggedUsername, message, out); 
                         break; 
+
+                    case "request_game_info":
+                        handleGameInfo(loggedUsername, message, out); 
+                        break; 
                     
                     default: 
                         NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Operazione non riconosciuta")); 
@@ -112,13 +115,8 @@ public class ClientHandler implements Runnable{
        switch(result){
         case "OK": 
             NetworkUtils.TCPsend(out, new ServerResponse("OK", "Login effettuato con successo"));
-            GameInfoResponse gameInfo = gameManager.getGameInfo(request.username.trim()); 
-            if(gameInfo != null){
-                NetworkUtils.TCPsend(out, gameInfo);
-            }
-            else{
-                NetworkUtils.TCPsend(out, new GameInfoResponse("NO_GAME", "Nessuna partita in corso"));
-            }
+            GameInfoResponse gameInfo = gameManager.getGameInfo(request.username.trim(), -1);   // -1 partita corrente 
+            NetworkUtils.TCPsend(out, gameInfo);
             return request.username.trim(); 
         
         case "USER_NOT_FOUND": 
@@ -229,6 +227,16 @@ public class ClientHandler implements Runnable{
                 break;
 
         }
+    }
 
+    private void handleGameInfo(String loggedUsername, String message, PrintWriter out){
+        if(loggedUsername == null){
+            NetworkUtils.TCPsend(out, GameInfoResponse.error("ERROR", "Devi essere loggato"));
+            return;
+        }
+
+        RequestGameInfoMessage request = JsonUtils.GSON.fromJson(message, RequestGameInfoMessage.class);
+        GameInfoResponse response = gameManager.getGameInfo(loggedUsername, request.gameId); 
+        NetworkUtils.TCPsend(out, response);
     }
 }

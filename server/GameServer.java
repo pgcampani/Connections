@@ -41,6 +41,7 @@ public class GameServer{
                 GameManagerState state = JsonUtils.GSON.fromJson(reader, GameManagerState.class);
                 if(state != null){
                     nextGameIndex = state.nextGameIndex; 
+                    gameStats = state.gameStats; 
                 }
             }
             catch(IOException e){
@@ -50,7 +51,7 @@ public class GameServer{
 
         GameManager gameManager;
         try {
-            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex, gameStats);
+            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex, gameStats, config.getGameStateFile());
             gameManager.start();
         }
         catch(IOException e){

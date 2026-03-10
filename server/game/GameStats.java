@@ -1,12 +1,17 @@
 package server.game; 
 
+import java.util.List;
+
+import messages.Group; 
+
 public class GameStats{
     public int gameId; 
     public int totalPlayers; 
     public int finishedPlayers; 
     public int wonPlayers; 
     public double totalScore; 
-    public boolean conculded; 
+    public boolean conculded;
+    public List<Group> groups; 
 
     public GameStats(int gameId){
         this.gameId = gameId; 

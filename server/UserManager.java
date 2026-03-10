@@ -166,7 +166,9 @@ public class UserManager{
                 if(stats != null){
                     stats.finalizePlayer(state.hasWon(), state.score);
                 }
-                // reset valori
+                state.finished = true;
+                // salvataggio e reset valori
+                user.pastGames.put(state.gameId, state); 
                 user.currentGameState = null; 
             }
         }

@@ -92,6 +92,10 @@ public class ClientMain{
                         case "submit proposal":
                             ClientCommands.submitProposal(scanner, socketChannel, write_buffer, read_buffer); 
                             break; 
+
+                        case "request game info": 
+                            ClientCommands.handleGameInfo(scanner, socketChannel, write_buffer, read_buffer);
+                            break; 
                         
                         case "exit":
                             ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 

@@ -25,14 +25,16 @@ public class GameManager{
     private Game currentGame; 
     private List<String> shuffledWords; 
     private ConcurrentHashMap<Integer, GameStats> gameStats = new ConcurrentHashMap<>(); 
+    private final String stateFile; 
 
-    public GameManager(UserManager userManager, String gameFile, int gameDuration , int startIndex, ConcurrentHashMap<Integer, GameStats> gameStats) throws IOException{
+    public GameManager(UserManager userManager, String gameFile, int gameDuration , int startIndex, ConcurrentHashMap<Integer, GameStats> gameStats, String stateFile) throws IOException{
         this.userManager = userManager; 
         this.gameLoader = new GameLoader(gameFile, startIndex);
         this.gameDuration = gameDuration; 
         if(gameStats != null){
             this.gameStats = gameStats; 
         }
+        this.stateFile = stateFile; 
     }
 
     public void start(){
@@ -99,25 +101,49 @@ public class GameManager{
         return shuffledWords; 
     }
 
-    public synchronized GameInfoResponse getGameInfo(String username){
-        if(currentGame == null){
-            return null; 
+    public synchronized GameInfoResponse getGameInfo(String username, int gameId){
+    
+        if(gameId == -1 || (currentGame != null && currentGame.gameId == gameId)){
+            
+            // partita corrente
+            if(currentGame == null){
+                return GameInfoResponse.error("NO_GAME", "Nessuna partita in corso"); 
+            }
+
+            User user = userManager.getUser(username); 
+            PlayerGameState state = user.currentGameState;
+
+            if(state == null || state.gameId != currentGame.gameId){
+                state = new PlayerGameState(currentGame.gameId);
+                user.currentGameState = state; 
+                gameStats.computeIfAbsent(currentGame.gameId, GameStats::new).addPlayer(); 
+            }
+
+            long timeRemaining = currentGame.endTime - System.currentTimeMillis(); 
+
+            List<String> remainingWords = new ArrayList<>(shuffledWords); 
+            for(Group group : state.correctGroups){
+                remainingWords.removeAll(group.words);
+            }
+
+            return GameInfoResponse.inProgress(timeRemaining, state.correctGroups, remainingWords, state.errors, state.score);
+        } 
+
+        // partita passata
+        GameStats stats = gameStats.get(gameId);
+        if(stats == null){
+            return GameInfoResponse.error("GAME_NOT_FOUND", "Partita non trovata");
         }
 
-        User user = userManager.getUser(username); 
-        PlayerGameState state = user.currentGameState;
-
-        if(state == null || state.gameId != currentGame.gameId){
-            state = new PlayerGameState(currentGame.gameId);
-            user.currentGameState = state; 
-
-            gameStats.computeIfAbsent(currentGame.gameId, GameStats::new).addPlayer(); 
+        User targetUser = userManager.getUser(username);
+        PlayerGameState pastState = targetUser.pastGames.get(gameId);
+        if(pastState == null){
+            return GameInfoResponse.error("NOT_PLAYED", "Non hai partecipato a questa partita");
         }
 
-        long timeRemaining = currentGame.endTime - System.currentTimeMillis(); 
-
-        return new GameInfoResponse(shuffledWords, state.correctGroups, state.errors, timeRemaining, state.score); 
+        return GameInfoResponse.concluded(stats.groups, pastState.correctGroups.size(), pastState.errors, pastState.score); 
     }
+
 
     public synchronized String submitProposal(String username, List<String> words){
         if(currentGame == null){
@@ -191,10 +217,10 @@ public class GameManager{
         if(currentGame == null){
             return;
         }
-        GameStats stats = gameStats.get(currentGame.gameId);
+        GameStats stats = gameStats.computeIfAbsent(currentGame.gameId, GameStats::new);
+        stats.groups = currentGame.groups; 
         userManager.finalizeGame(currentGame.gameId, stats);
-        if(stats != null){
-            stats.conculded = true; 
-        }
+        stats.conculded = true;
+        saveState(stateFile);
     }
 }
