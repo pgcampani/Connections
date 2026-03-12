@@ -36,7 +36,7 @@ public class ClientMain{
             System.out.println(">  exit");
 
            while(true){ 
-                System.out.print("> "); 
+                System.out.print(">  "); 
                 if(!scanner.hasNextLine()){
                     System.out.println("Connessione chiusa.");
                     break; 
@@ -63,6 +63,13 @@ public class ClientMain{
                         case "exit":
                             System.out.println("Disconnessione...");
                             return;
+                        
+                        case "help":
+                            System.out.println("Comandi disponibili:");
+                            System.out.println(">  register");
+                            System.out.println(">  login");
+                            System.out.println(">  exit");
+                            break;
 
                         default:
                             System.out.println("Comando non valido");
@@ -96,11 +103,25 @@ public class ClientMain{
                         case "request game info": 
                             ClientCommands.handleGameInfo(scanner, socketChannel, write_buffer, read_buffer);
                             break; 
+
+                        case "game stats":
+                            ClientCommands.handleGameStats(scanner, socketChannel, write_buffer, read_buffer); 
+                            break; 
                         
                         case "exit":
                             ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 
                             System.out.println("Disconnessione..."); 
                             return; 
+
+                        case "help":
+                            System.out.println("Comandi disponibili:");
+                            System.out.println(">  register");
+                            System.out.println(">  login");
+                            System.out.println(">  update credential");
+                            System.out.println(">  submit proposal");
+                            System.out.println(">  request game info"); 
+                            System.out.println(">  exit");
+                            break;
                         
                         default: 
                             System.out.println("Comando non valido"); 

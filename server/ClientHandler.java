@@ -19,6 +19,8 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ConcurrentHashMap;
 
+import server.game.GameStats;
+
 
 public class ClientHandler implements Runnable{
 
@@ -61,16 +63,20 @@ public class ClientHandler implements Runnable{
                         loggedUsername = null; 
                         break; 
                     
-                    case "update_credential":
+                    case "updateCredential":
                         loggedUsername = handleUpdateCredential(loggedUsername, message, out);
                         break; 
                     
-                    case "submit_proposal": 
+                    case "submitProposal": 
                         handleProposal(loggedUsername, message, out); 
                         break; 
 
-                    case "request_game_info":
+                    case "requestGameInfo":
                         handleGameInfo(loggedUsername, message, out); 
+                        break; 
+
+                    case "requestGameStats":
+                        handleGameStats(message, out); 
                         break; 
                     
                     default: 
@@ -237,6 +243,15 @@ public class ClientHandler implements Runnable{
 
         RequestGameInfoMessage request = JsonUtils.GSON.fromJson(message, RequestGameInfoMessage.class);
         GameInfoResponse response = gameManager.getGameInfo(loggedUsername, request.gameId); 
+        NetworkUtils.TCPsend(out, response);
+    }
+
+    
+    private void handleGameStats(String message, PrintWriter out){
+
+        RequestGameStatsMessage request = JsonUtils.GSON.fromJson(message, RequestGameStatsMessage.class); 
+
+        GameStatsResponse response = gameManager.getGameStats(request.gameId); 
         NetworkUtils.TCPsend(out, response);
     }
 }

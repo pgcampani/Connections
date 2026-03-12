@@ -200,4 +200,41 @@ public class ClientCommands{
                 break;
         }
     }
+
+
+    public static void handleGameStats(Scanner scanner, SocketChannel socketChannel, ByteBuffer w_buffer, ByteBuffer r_buffer)throws IOException{
+        int gameId; 
+        System.out.println("Inserisci ID partita");
+        gameId = Integer.parseInt(scanner.nextLine().trim()); 
+
+        NetworkUtils.NIOsend(socketChannel, w_buffer, new RequestGameStatsMessage(gameId));
+
+        String raw = NetworkUtils.NIOreceive(socketChannel, r_buffer);
+        GameStatsResponse response = JsonUtils.GSON.fromJson(raw, GameStatsResponse.class); 
+
+        switch(response.status){
+            case "IN_PROGRESS":
+                System.out.println("Tempo rimanente: " + response.timeRemaining / 1000 + " secondi");
+                System.out.println("Giocatori in partita: " + response.playerInGame); 
+                System.out.println("Giocatori che hanno terminato la partita: " + response.playerFinished);
+                System.out.println("Numero vincitori: " + response.playerWinners);
+                break; 
+            
+            case "CONCLUDED":
+                //int playerCount, int playerFinished, int playerWinners, double avgPointsGame
+                System.out.println("Giocatori che hanno giocato: " + response.playerCount); 
+                System.out.println("Giocatori che hanno terminato la partita: " + response.playerFinished); 
+                System.out.println("Numero vincitori: " + response.playerWinners);
+                System.out.println("Media punti totale: " + response.avgPointsGame);
+                break; 
+
+            case "NO_GAME": 
+                System.out.println("Errore: " + response.message);
+                break; 
+            
+            default:
+                System.out.println("Errore: " + response.message);
+                break; 
+        }
+    }
 }

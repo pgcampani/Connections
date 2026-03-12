@@ -1,7 +1,7 @@
 package messages.requests; 
 
 public class UpdateCredentialMessage{
-    public String operation = "update_credential";
+    public String operation = "updateCredential";
     public String old_username; 
     public String old_psw;
     public String new_username;

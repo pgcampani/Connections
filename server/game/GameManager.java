@@ -196,6 +196,13 @@ public class GameManager{
                 System.out.println("Punteggio corrente di " + username + " e' " + state.score);
 
                 if(state.hasWon()){
+                    // Se ho vinto il quarto gruppo viene dato in automatico e aggiunto alla lista dei gruppi indovinati
+                    for(Group remaining : currentGame.groups){
+                        if(!state.correctGroups.contains(remaining)){
+                            state.correctGroups.add(remaining);
+                            break; 
+                        }
+                    }
                     state.finished = true;
                     return "WON";
                 }
@@ -222,5 +229,31 @@ public class GameManager{
         userManager.finalizeGame(currentGame.gameId, stats);
         stats.conculded = true;
         saveState(stateFile);
+    }
+
+    public synchronized GameStatsResponse getGameStats(int gameId){
+
+        if(currentGame == null){
+            return GameStatsResponse.error("NO_GAME", "Nessuna partita in corso");
+        }
+
+        if(currentGame != null && currentGame.gameId == gameId){
+
+            GameStats stats = gameStats.get(currentGame.gameId); 
+            if(stats == null){
+                return GameStatsResponse.error("NO_GAME", "Nessuna statistica disponibile"); 
+            }
+
+            long timeRemaining = currentGame.endTime - System.currentTimeMillis(); 
+
+            return GameStatsResponse.inProgress(timeRemaining, stats.getActivePlayers(), stats.finishedPlayers, stats.wonPlayers);
+        }
+
+        GameStats stats = gameStats.get(gameId); 
+        if(stats == null){
+            return GameStatsResponse.error("NO_GAME", "Partita non trovata"); 
+        }
+
+        return GameStatsResponse.concluded(stats.totalPlayers, stats.finishedPlayers, stats.wonPlayers, stats.getAverageScore()); 
     }
 }

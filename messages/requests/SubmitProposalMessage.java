@@ -3,7 +3,7 @@ package  messages.requests;
 import java.util.List;
 
 public class SubmitProposalMessage {
-    public String operation = "submit_proposal"; 
+    public String operation = "submitProposal"; 
     public List<String> words; 
 
     public SubmitProposalMessage(List<String> words){
