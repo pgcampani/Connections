@@ -68,6 +68,12 @@ public class GameManager{
             currentGame = game; 
             shuffledWords = words;
 
+            // Statistiche per nuova partita se non presente in mappa
+            GameStats stats = gameStats.computeIfAbsent(game.gameId, id->new GameStats(id));
+            stats.groups = game.groups; 
+
+            userManager.addLoggedUsersToGame(game.gameId, stats);
+
             System.out.println("Nuova partita avviata " + game.gameId); 
         }
         catch(IOException e){
@@ -104,7 +110,6 @@ public class GameManager{
     public synchronized GameInfoResponse getGameInfo(String username, int gameId){
     
         if(gameId == -1 || (currentGame != null && currentGame.gameId == gameId)){
-            
             // partita corrente
             if(currentGame == null){
                 return GameInfoResponse.error("NO_GAME", "Nessuna partita in corso"); 
@@ -204,6 +209,12 @@ public class GameManager{
                         }
                     }
                     state.finished = true;
+                    
+                    GameStats stats = gameStats.get(currentGame.gameId);
+                    if(stats != null){
+                        stats.finalizePlayer(true, state.score, state.finished);
+                    }
+                    
                     return "WON";
                 }
 
@@ -215,8 +226,13 @@ public class GameManager{
 
         if(state.hasLost()){
             state.finished = true;
+            GameStats stats = gameStats.get(currentGame.gameId);
+            if(stats != null){
+                stats.finalizePlayer(false, state.score, state.finished);
+            }
             return "LOST";
         }
+
         return "WRONG"; 
     }
 
@@ -241,7 +257,8 @@ public class GameManager{
 
             GameStats stats = gameStats.get(currentGame.gameId); 
             if(stats == null){
-                return GameStatsResponse.error("NO_GAME", "Nessuna statistica disponibile"); 
+                long timeRemaining = currentGame.endTime - System.currentTimeMillis();
+                return GameStatsResponse.inProgress(timeRemaining, 0, 0, 0);
             }
 
             long timeRemaining = currentGame.endTime - System.currentTimeMillis(); 

@@ -26,8 +26,11 @@ public class GameStats{
         totalPlayers++; 
     }
 
-    public void finalizePlayer(boolean won, int score){
-        finishedPlayers++; 
+    public void finalizePlayer(boolean won, int score, boolean finished){
+        if(finished){
+            finishedPlayers++; 
+        }
+        
         if(won){
             wonPlayers++; 
         }

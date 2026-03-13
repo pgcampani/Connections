@@ -108,6 +108,10 @@ public class ClientMain{
                             ClientCommands.handleGameStats(scanner, socketChannel, write_buffer, read_buffer); 
                             break; 
                         
+                        case "leaderboard":
+                            ClientCommands.handleLeaderboard(scanner, socketChannel, write_buffer, read_buffer);
+                            break; 
+                        
                         case "exit":
                             ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 
                             System.out.println("Disconnessione..."); 
@@ -120,6 +124,7 @@ public class ClientMain{
                             System.out.println(">  update credential");
                             System.out.println(">  submit proposal");
                             System.out.println(">  request game info"); 
+                            System.out.println(">  leaderboard"); 
                             System.out.println(">  exit");
                             break;
                         

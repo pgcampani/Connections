@@ -7,6 +7,10 @@ import messages.JsonUtils;
 import java.io.*; 
 import java.lang.reflect.Type; 
 import java.security.cert.PKIXBuilderParameters;
+import java.util.List; 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map; 
 import java.util.concurrent.ConcurrentHashMap; 
 
 import server.game.PlayerGameState;
@@ -24,7 +28,7 @@ public class UserManager{
     public boolean register(String username, String password){
         
         User newUser = new User(password); 
-
+        newUser.username = username; 
         User existing = users.putIfAbsent(username, newUser);
 
         if(existing != null){
@@ -134,6 +138,9 @@ public class UserManager{
             
             // Se il file non è vuoto scrivi nella mappa
             if(loaded != null){
+                for(Map.Entry<String, User> entry : loaded.entrySet()){
+                    entry.getValue().username = entry.getKey(); 
+                }
                 users.putAll(loaded); 
             }
             System.out.println("Utenti caricati: " + users.size()); 
@@ -164,7 +171,9 @@ public class UserManager{
 
                 // aggiorna statische partita
                 if(stats != null){
-                    stats.finalizePlayer(state.hasWon(), state.score);
+                    if(!state.finished){
+                        stats.finalizePlayer(state.hasWon(), state.score, state.finished);
+                    }
                 }
                 state.finished = true;
                 // salvataggio e reset valori
@@ -173,6 +182,39 @@ public class UserManager{
             }
         }
         saveUsers();
+    }
+
+    public void addLoggedUsersToGame(int gameId, GameStats stats){
+        for(User user : users.values()){
+            if(user.isLogged){
+                user.currentGameState = new PlayerGameState(gameId);
+                stats.addPlayer();
+            }
+        }
+    }
+
+    public List<User> getLeaderboard(String playerName, int topPlayers){
+        List<User> leaderboard = new ArrayList<>(users.values());
+        Collections.sort(leaderboard, (a,b) -> b.totalScore - a.totalScore);
+        
+        if(playerName != null){
+            for(int i = 0; i < leaderboard.size(); i++){
+                if(leaderboard.get(i).username != null && leaderboard.get(i).username.equals(playerName)){
+                    return leaderboard.subList(i, i+1);
+                }
+            }
+            return null; 
+        }
+
+        int limit; 
+        if(topPlayers == -1){
+            limit = leaderboard.size();
+        }
+        else{
+            limit = Math.min(topPlayers, leaderboard.size());
+        }
+        
+        return leaderboard.subList(0, limit); 
     }
 
     public User getUser(String username){

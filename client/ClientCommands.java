@@ -204,7 +204,7 @@ public class ClientCommands{
 
     public static void handleGameStats(Scanner scanner, SocketChannel socketChannel, ByteBuffer w_buffer, ByteBuffer r_buffer)throws IOException{
         int gameId; 
-        System.out.println("Inserisci ID partita");
+        System.out.print("Inserisci ID partita ");
         gameId = Integer.parseInt(scanner.nextLine().trim()); 
 
         NetworkUtils.NIOsend(socketChannel, w_buffer, new RequestGameStatsMessage(gameId));
@@ -235,6 +235,52 @@ public class ClientCommands{
             default:
                 System.out.println("Errore: " + response.message);
                 break; 
+        }
+    }
+
+    public static void handleLeaderboard(Scanner scanner, SocketChannel socketChannel, ByteBuffer w_buffer, ByteBuffer r_buffer) throws IOException{
+        
+        System.out.println("Inserisci indice");
+        System.out.println("1.  Classifica completa");
+        System.out.println("2.  Top K giocatori");
+        System.out.println("3.  Posizione di un giocatore"); 
+        System.out.print(">  ");
+
+        String playerName = null; 
+        int topPlayers = -1; 
+        String index = scanner.nextLine().trim(); 
+
+        switch(index){
+            case "1":
+                break;
+            
+            case "2":
+                System.out.print("Inserisci numero giocatori da visualizzare: ");
+                topPlayers = Integer.parseInt(scanner.nextLine().trim());
+                break; 
+
+            case "3":
+                System.out.print("Inserisci username: ");
+                playerName = scanner.nextLine().trim();
+                break;
+
+            default:
+                System.out.println("Indice non valido");
+                return; 
+        }
+
+        NetworkUtils.NIOsend(socketChannel, w_buffer, new RequestLeaderboardMessage(playerName, topPlayers));
+
+        String raw = NetworkUtils.NIOreceive(socketChannel, r_buffer);
+        LeaderboardResponse response = JsonUtils.GSON.fromJson(raw, LeaderboardResponse.class);
+
+        if(response.status.equals("OK")){
+            for(LeaderboardEntry entry : response.entries){
+                System.out.printf("%d. %-15s %d punti%n", entry.rank, entry.username, entry.score);        
+            }
+        }
+        else{
+            System.out.println("Errore " + response.message); 
         }
     }
 }

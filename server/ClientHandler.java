@@ -17,7 +17,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import server.game.GameStats;
 
@@ -77,6 +80,10 @@ public class ClientHandler implements Runnable{
 
                     case "requestGameStats":
                         handleGameStats(message, out); 
+                        break; 
+                    
+                    case "requestLeaderboard":
+                        handleLeaderboard(loggedUsername, message, out);
                         break; 
                     
                     default: 
@@ -252,6 +259,36 @@ public class ClientHandler implements Runnable{
         RequestGameStatsMessage request = JsonUtils.GSON.fromJson(message, RequestGameStatsMessage.class); 
 
         GameStatsResponse response = gameManager.getGameStats(request.gameId); 
+        NetworkUtils.TCPsend(out, response);
+    }
+    
+
+    private void handleLeaderboard(String loggedUsername, String message, PrintWriter out){
+        if(loggedUsername == null){
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Devi essere loggato"));
+            return; 
+        }
+
+        RequestLeaderboardMessage request = JsonUtils.GSON.fromJson(message, RequestLeaderboardMessage.class);
+        
+        List<User> sortedLeaderboard = userManager.getLeaderboard(request.playerName, request.topPlayers);
+
+        if(sortedLeaderboard == null){
+            LeaderboardResponse error = new LeaderboardResponse();
+            error.status = "PLAYER_NOT_FOUND";
+            error.message = "Giocatore non trovato"; 
+            NetworkUtils.TCPsend(out, error);
+            return; 
+        }
+
+        List<LeaderboardEntry> entries = new ArrayList<>();
+        for(int i = 0; i < sortedLeaderboard.size(); i++){
+            entries.add(new LeaderboardEntry(i + 1, sortedLeaderboard.get(i).username, sortedLeaderboard.get(i).totalScore));
+        }
+
+        LeaderboardResponse response = new LeaderboardResponse();
+        response.status = "OK";
+        response.entries = entries;
         NetworkUtils.TCPsend(out, response);
     }
 }
