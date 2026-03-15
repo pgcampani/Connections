@@ -85,6 +85,10 @@ public class ClientHandler implements Runnable{
                     case "requestLeaderboard":
                         handleLeaderboard(loggedUsername, message, out);
                         break; 
+
+                    case "requestPlayerStats":
+                        handlePlayerStats(loggedUsername, message, out); 
+                        break; 
                     
                     default: 
                         NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Operazione non riconosciuta")); 
@@ -290,5 +294,32 @@ public class ClientHandler implements Runnable{
         response.status = "OK";
         response.entries = entries;
         NetworkUtils.TCPsend(out, response);
+    }
+
+    
+    private void handlePlayerStats(String loggedUsername, String message, PrintWriter out){
+        if(loggedUsername == null){
+            NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Devi essere loggato"));
+            return;
+        }
+        
+        User user = userManager.getUser(loggedUsername); 
+
+        PlayerStatsResponse stats = new PlayerStatsResponse(); 
+        stats.status = "OK"; 
+        stats.puzzlesCompleted = user.gamesPlayed; 
+        if(user.gamesPlayed == 0){
+            stats.winRate = 0; 
+            stats.lossRate = 0; 
+        }
+        else{
+            stats.winRate = (double) user.gamesWon / user.gamesPlayed * 100; 
+            stats.lossRate = (double) user.gameLost / user.gamesPlayed * 100;
+        }
+        stats.currentStreak = user.currentStreak; 
+        stats.perfectPuzzles = user.perfectPuzzles; 
+        stats.mistakeHistogram = user.mistakeHistogram; 
+
+        NetworkUtils.TCPsend(out, stats);
     }
 }

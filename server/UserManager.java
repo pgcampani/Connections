@@ -6,7 +6,6 @@ import messages.JsonUtils;
 
 import java.io.*; 
 import java.lang.reflect.Type; 
-import java.security.cert.PKIXBuilderParameters;
 import java.util.List; 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -165,8 +164,31 @@ public class UserManager{
             if(state != null && state.gameId == gameId){
                 user.totalScore += state.score; 
                 user.gamesPlayed++; 
+                user.currentStreak = 0; 
+                user.mistakeHistogram[5]++; 
+                
                 if(state.hasWon()){
                     user.gamesWon++; 
+                    user.currentStreak++; 
+                    if(user.currentStreak > user.maxStreak){
+                        user.maxStreak = user.currentStreak; 
+                    }
+                    if(state.errors == 0){
+                        user.perfectPuzzles++; 
+                    }
+                }
+                else{
+                    if(state.hasLost()){
+                        user.gameLost++; 
+                    }
+                    user.currentStreak = 0; 
+                }
+
+                if(state.finished){
+                    user.mistakeHistogram[state.errors]++;
+                }
+                else{
+                    user.mistakeHistogram[5]++; 
                 }
 
                 // aggiorna statische partita

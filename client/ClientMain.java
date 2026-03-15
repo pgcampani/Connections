@@ -112,6 +112,10 @@ public class ClientMain{
                             ClientCommands.handleLeaderboard(scanner, socketChannel, write_buffer, read_buffer);
                             break; 
                         
+                        case "player stats":
+                            ClientCommands.handlePlayerStats(socketChannel, write_buffer, read_buffer); 
+                            break;
+                        
                         case "exit":
                             ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 
                             System.out.println("Disconnessione..."); 

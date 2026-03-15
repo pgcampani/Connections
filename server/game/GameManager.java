@@ -131,7 +131,7 @@ public class GameManager{
                 remainingWords.removeAll(group.words);
             }
 
-            return GameInfoResponse.inProgress(timeRemaining, state.correctGroups, remainingWords, state.errors, state.score);
+            return GameInfoResponse.inProgress(timeRemaining, state.correctGroups, remainingWords, state.errors, state.score, currentGame.gameId);
         } 
 
         // partita passata

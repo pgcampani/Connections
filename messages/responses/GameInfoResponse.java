@@ -14,10 +14,11 @@ public class GameInfoResponse{
     public int score; 
     public List<Group> groups; 
     public int correctCount; 
+    public int gameId; 
 
     public GameInfoResponse(){}
 
-    public static GameInfoResponse inProgress(long timeRemaining, List<Group> correctGroups, List<String> remainingWords, int errors, int score){
+    public static GameInfoResponse inProgress(long timeRemaining, List<Group> correctGroups, List<String> remainingWords, int errors, int score, int gameId){
         GameInfoResponse r = new GameInfoResponse(); 
         r.status = "IN_PROGRESS";
         r.timeRemaining = timeRemaining; 
@@ -25,6 +26,7 @@ public class GameInfoResponse{
         r.remainingWords = remainingWords; 
         r.errors = errors; 
         r.score = score; 
+        r.gameId = gameId; 
         return r; 
     }
 

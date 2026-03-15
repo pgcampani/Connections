@@ -60,7 +60,7 @@ public class ClientCommands{
             GameInfoResponse gameInfo = JsonUtils.GSON.fromJson(infoRaw, GameInfoResponse.class);
 
             if(gameInfo.status.equals("IN_PROGRESS")){
-                System.out.println("Partita in corso");
+                System.out.println("Partita in corso. ID partita: " + gameInfo.gameId);
                 System.out.println("Parole:");
                 for(int i = 0; i < gameInfo.remainingWords.size(); i++){
                     System.out.printf("%-15s", gameInfo.remainingWords.get(i));
@@ -153,7 +153,7 @@ public class ClientCommands{
 
     public static void handleGameInfo(Scanner scanner, SocketChannel socketChannel, ByteBuffer w_buffer, ByteBuffer r_buffer) throws IOException{
         int gameId; 
-        System.out.print("Inserisci ID partita (-1 per partita corrente): ");
+        System.out.print("Inserisci ID partita: ");
         gameId = Integer.parseInt(scanner.nextLine().trim());
 
         NetworkUtils.NIOsend(socketChannel, w_buffer, new RequestGameInfoMessage(gameId));
@@ -163,7 +163,7 @@ public class ClientCommands{
 
         switch(response.status){
             case "IN_PROGRESS":
-                System.out.println("Partita in corso");
+                System.out.println("Partita in corso. ID partita: " + response.gameId);
                 System.out.println("Tempo rimanente " + response.timeRemaining / 1000 + " secondi");
                 System.out.println("Errori: " + response.errors);
                 System.out.println("Punteggio: " + response.score);
@@ -281,6 +281,31 @@ public class ClientCommands{
         }
         else{
             System.out.println("Errore " + response.message); 
+        }
+    }
+
+
+    public static void handlePlayerStats(SocketChannel socketChannel, ByteBuffer w_buffer, ByteBuffer r_buffer)throws  IOException{
+        NetworkUtils.NIOsend(socketChannel, w_buffer, new RequestPlayerStatsMessage());
+
+        String raw = NetworkUtils.NIOreceive(socketChannel, r_buffer); 
+        PlayerStatsResponse response = JsonUtils.GSON.fromJson(raw, PlayerStatsResponse.class); 
+
+        if(response.status.equals("OK")){
+            System.out.println("Puzzle completati: " + response.puzzlesCompleted);
+            System.out.println("Win Rate: " + response.winRate + "%");
+            System.out.println("Loss Rate: " + response.lossRate + "%");
+            System.out.println("Streak corrente: " + response.currentStreak);
+            System.out.println("Streak più lunga: " + response.maxStreak);
+            System.out.println("Puzzle perfetti: "+ response.perfectPuzzles);
+            System.out.println("Istogramma errori: ");
+            for(int i = 0; i < 5; i++){
+                System.out.println(" " + i + " errori " + response.mistakeHistogram[i]);
+            }
+            System.out.println(" Non terminate: " + response.mistakeHistogram[5]);
+        }
+        else{
+            System.out.println("Errore: " + response.message); 
         }
     }
 }

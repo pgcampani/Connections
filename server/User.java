@@ -15,6 +15,11 @@ public class User{
     public Map<Integer, PlayerGameState> pastGames = new HashMap<>(); 
     public transient int currentGameid; 
     public transient boolean isLogged; 
+    public int gameLost; 
+    public int currentStreak; 
+    public int maxStreak;
+    public int perfectPuzzles; 
+    public int[] mistakeHistogram = new int[6]; 
 
     public User(String password){
         this.password = password; 
