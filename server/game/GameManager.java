@@ -93,7 +93,7 @@ public class GameManager{
 
     public synchronized void saveState(String stateFile){
         try(FileWriter writer = new FileWriter(stateFile)){
-            JsonUtils.GSON.toJson(new GameManagerState(gameLoader.getNextGameIndex(), gameStats), writer);
+            JsonUtils.GSON_PRETTY.toJson(new GameManagerState(gameLoader.getNextGameIndex(), gameStats), writer);
         } catch(IOException e){
             e.printStackTrace();
         }
@@ -215,6 +215,8 @@ public class GameManager{
                         stats.finalizePlayer(true, state.score, state.finished);
                     }
                     
+                    userManager.finalizeWin(username, state);
+
                     return "WON";
                 }
 
@@ -230,6 +232,8 @@ public class GameManager{
             if(stats != null){
                 stats.finalizePlayer(false, state.score, state.finished);
             }
+
+            userManager.finalizeLoss(username, state);
             return "LOST";
         }
 

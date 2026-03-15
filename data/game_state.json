@@ -1,1 +1,143 @@
-{"nextGameIndex":3,"gameStats":{"0":{"gameId":0,"totalPlayers":1,"finishedPlayers":0,"wonPlayers":0,"totalScore":12.0,"conculded":true,"groups":[{"theme":"WET WEATHER","words":["SNOW","HAIL","RAIN","SLEET"]},{"theme":"NBA TEAMS","words":["HEAT","BUCKS","JAZZ","NETS"]},{"theme":"KEYBOARD KEYS","words":["SHIFT","TAB","RETURN","OPTION"]},{"theme":"PALINDROMES","words":["LEVEL","KAYAK","RACECAR","MOM"]}]},"1":{"gameId":1,"totalPlayers":2,"finishedPlayers":1,"wonPlayers":1,"totalScore":14.0,"conculded":true,"groups":[{"theme":"FOOTWEAR","words":["PUMP","LOAFER","BOOT","SNEAKER"]},{"theme":"UNITS OF LENGTH","words":["FOOT","LEAGUE","YARD","MILE"]},{"theme":"MAGAZINES","words":["TIME","US","PEOPLE","ESSENCE"]},{"theme":"LETTER HOMOPHONES","words":["SEA","WHY","ARE","QUEUE"]}]},"2":{"gameId":2,"totalPlayers":2,"finishedPlayers":0,"wonPlayers":0,"totalScore":0.0,"conculded":true,"groups":[{"theme":"FACIAL FEATURES","words":["MOUTH","NOSE","EYE","CHEEK"]},{"theme":"SYNONYMS FOR EAT","words":["WOLF","CHOW","SCARF","GOBBLE"]},{"theme":"\"DOG BREEDS, INFORMALLY\"","words":["LAB","POM","PIT","PEKE"]},{"theme":"MEMBERS OF A TRIO","words":["AMIGO","STOOGE","KING","TENOR"]}]}}}
+{
+  "nextGameIndex": 3,
+  "gameStats": {
+    "0": {
+      "gameId": 0,
+      "totalPlayers": 1,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 6.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "WET WEATHER",
+          "words": [
+            "SNOW",
+            "HAIL",
+            "RAIN",
+            "SLEET"
+          ]
+        },
+        {
+          "theme": "NBA TEAMS",
+          "words": [
+            "HEAT",
+            "BUCKS",
+            "JAZZ",
+            "NETS"
+          ]
+        },
+        {
+          "theme": "KEYBOARD KEYS",
+          "words": [
+            "SHIFT",
+            "TAB",
+            "RETURN",
+            "OPTION"
+          ]
+        },
+        {
+          "theme": "PALINDROMES",
+          "words": [
+            "LEVEL",
+            "KAYAK",
+            "RACECAR",
+            "MOM"
+          ]
+        }
+      ]
+    },
+    "1": {
+      "gameId": 1,
+      "totalPlayers": 1,
+      "finishedPlayers": 1,
+      "wonPlayers": 0,
+      "totalScore": -16.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "FOOTWEAR",
+          "words": [
+            "PUMP",
+            "LOAFER",
+            "BOOT",
+            "SNEAKER"
+          ]
+        },
+        {
+          "theme": "UNITS OF LENGTH",
+          "words": [
+            "FOOT",
+            "LEAGUE",
+            "YARD",
+            "MILE"
+          ]
+        },
+        {
+          "theme": "MAGAZINES",
+          "words": [
+            "TIME",
+            "US",
+            "PEOPLE",
+            "ESSENCE"
+          ]
+        },
+        {
+          "theme": "LETTER HOMOPHONES",
+          "words": [
+            "SEA",
+            "WHY",
+            "ARE",
+            "QUEUE"
+          ]
+        }
+      ]
+    },
+    "2": {
+      "gameId": 2,
+      "totalPlayers": 1,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "FACIAL FEATURES",
+          "words": [
+            "MOUTH",
+            "NOSE",
+            "EYE",
+            "CHEEK"
+          ]
+        },
+        {
+          "theme": "SYNONYMS FOR EAT",
+          "words": [
+            "WOLF",
+            "CHOW",
+            "SCARF",
+            "GOBBLE"
+          ]
+        },
+        {
+          "theme": "\"DOG BREEDS, INFORMALLY\"",
+          "words": [
+            "LAB",
+            "POM",
+            "PIT",
+            "PEKE"
+          ]
+        },
+        {
+          "theme": "MEMBERS OF A TRIO",
+          "words": [
+            "AMIGO",
+            "STOOGE",
+            "KING",
+            "TENOR"
+          ]
+        }
+      ]
+    }
+  }
+}

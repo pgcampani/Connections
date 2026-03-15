@@ -151,7 +151,7 @@ public class UserManager{
 
     public synchronized void saveUsers(){
         try(FileWriter writer = new FileWriter(usersFile)){
-            JsonUtils.GSON.toJson(users, writer);
+            JsonUtils.GSON_PRETTY.toJson(users, writer);
         }
         catch(IOException e){
             e.printStackTrace(); 
@@ -162,41 +162,19 @@ public class UserManager{
         for(User user: users.values()){
             PlayerGameState state = user.currentGameState;
             if(state != null && state.gameId == gameId){
-                user.totalScore += state.score; 
-                user.gamesPlayed++; 
-                user.currentStreak = 0; 
-                user.mistakeHistogram[5]++; 
-                
-                if(state.hasWon()){
-                    user.gamesWon++; 
-                    user.currentStreak++; 
-                    if(user.currentStreak > user.maxStreak){
-                        user.maxStreak = user.currentStreak; 
-                    }
-                    if(state.errors == 0){
-                        user.perfectPuzzles++; 
-                    }
-                }
-                else{
-                    if(state.hasLost()){
-                        user.gameLost++; 
-                    }
+                if(!state.finished){
+                    user.totalScore += state.score; 
+                    user.gamesPlayed++; 
                     user.currentStreak = 0; 
+                    user.mistakeHistogram[5]++;
+                     // aggiorna statische partita
+                    if(stats != null){
+                        if(!state.finished){
+                            stats.finalizePlayer(state.hasWon(), state.score, state.finished);
+                        }
+                    } 
                 }
-
-                if(state.finished){
-                    user.mistakeHistogram[state.errors]++;
-                }
-                else{
-                    user.mistakeHistogram[5]++; 
-                }
-
-                // aggiorna statische partita
-                if(stats != null){
-                    if(!state.finished){
-                        stats.finalizePlayer(state.hasWon(), state.score, state.finished);
-                    }
-                }
+               
                 state.finished = true;
                 // salvataggio e reset valori
                 user.pastGames.put(state.gameId, state); 
@@ -204,6 +182,36 @@ public class UserManager{
             }
         }
         saveUsers();
+    }
+
+    public synchronized void finalizeWin(String username, PlayerGameState state){
+        User user = users.get(username);
+        if(user == null) return;
+
+        user.totalScore += state.score;
+        user.gamesPlayed++; 
+        user.gamesWon++; 
+        user.currentStreak++;
+        if(user.currentStreak > user.maxStreak){
+            user.maxStreak = user.currentStreak; 
+        }
+        if(state.errors == 0){
+            user.perfectPuzzles++; 
+        }
+        user.mistakeHistogram[state.errors]++; 
+
+    }
+
+
+    public synchronized void finalizeLoss(String username, PlayerGameState state){
+        User user = users.get(username);
+        if(user == null) return;
+
+        user.totalScore += state.score;
+        user.gamesPlayed++; 
+        user.gameLost++;
+        user.currentStreak = 0; 
+        user.mistakeHistogram[state.errors]++; 
     }
 
     public void addLoggedUsersToGame(int gameId, GameStats stats){
