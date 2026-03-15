@@ -106,7 +106,8 @@ public class ClientHandler implements Runnable{
         }
         finally{
             if(loggedUsername != null){
-                userManager.logout(loggedUsername); 
+                userManager.logout(loggedUsername);
+                userManager.unregisterUdpClient(loggedUsername); 
                 System.out.println("Logout automatico effettuato per " + loggedUsername); 
             }
         }
@@ -132,6 +133,7 @@ public class ClientHandler implements Runnable{
        switch(result){
         case "OK": 
             NetworkUtils.TCPsend(out, new ServerResponse("OK", "Login effettuato con successo"));
+            userManager.registerUdpClient(request.username.trim(), clientSocket.getInetAddress(), request.udpPort);
             GameInfoResponse gameInfo = gameManager.getGameInfo(request.username.trim(), -1);   // -1 partita corrente 
             NetworkUtils.TCPsend(out, gameInfo);
             return request.username.trim(); 

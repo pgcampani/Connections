@@ -4,17 +4,20 @@ import messages.responses.*;
 import messages.*;
 import server.User; 
 import server.UserManager;
+import server.UDPNotifier; 
 
 import java.io.IOException;
 import java.util.Collections; 
 import java.util.List;
 import java.util.ArrayList; 
+import java.util.Map; 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.Executors; 
 import java.util.concurrent.ScheduledExecutorService; 
 import java.util.concurrent.TimeUnit;
 import java.io.FileWriter; 
+import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameManager{
@@ -26,8 +29,9 @@ public class GameManager{
     private List<String> shuffledWords; 
     private ConcurrentHashMap<Integer, GameStats> gameStats = new ConcurrentHashMap<>(); 
     private final String stateFile; 
+    private final UDPNotifier udpNotifier; 
 
-    public GameManager(UserManager userManager, String gameFile, int gameDuration , int startIndex, ConcurrentHashMap<Integer, GameStats> gameStats, String stateFile) throws IOException{
+    public GameManager(UserManager userManager, String gameFile, int gameDuration , int startIndex, ConcurrentHashMap<Integer, GameStats> gameStats, String stateFile, UDPNotifier udpNotifier) throws IOException{
         this.userManager = userManager; 
         this.gameLoader = new GameLoader(gameFile, startIndex);
         this.gameDuration = gameDuration; 
@@ -35,6 +39,7 @@ public class GameManager{
             this.gameStats = gameStats; 
         }
         this.stateFile = stateFile; 
+        this.udpNotifier = udpNotifier; 
     }
 
     public void start(){
@@ -73,6 +78,11 @@ public class GameManager{
             stats.groups = game.groups; 
 
             userManager.addLoggedUsersToGame(game.gameId, stats);
+
+            long timeRemaining = currentGame.endTime - System.currentTimeMillis();
+            GameInfoResponse notification = GameInfoResponse.inProgress(timeRemaining, new ArrayList<>(), shuffledWords, 0, 0, currentGame.gameId);
+            // Notifica nuova partita
+            udpNotifier.notifyAll(userManager.getUdpClients(), notification);
 
             System.out.println("Nuova partita avviata " + game.gameId); 
         }
@@ -248,7 +258,36 @@ public class GameManager{
         stats.groups = currentGame.groups; 
         userManager.finalizeGame(currentGame.gameId, stats);
         stats.conculded = true;
+
+        List<LeaderboardEntry> ranking = userManager.getGameRanking(currentGame.gameId);
+
+        GameStatsResponse gameStatsResponse = GameStatsResponse.concluded(stats.totalPlayers, stats.finishedPlayers, stats.wonPlayers, stats.getAverageScore());
+
+        for(Map.Entry<String, SocketAddress> entry : userManager.getUdpClients().entrySet()){
+            String username = entry.getKey();
+            SocketAddress address = entry.getValue();
+
+            // stato del giocatore partita corrente
+            User user = userManager.getUser(username);
+            PlayerGameState pastState = user.pastGames.get(currentGame.gameId);
+
+            GameInfoResponse gameInfoResponse;
+            if(pastState != null){
+                gameInfoResponse = GameInfoResponse.concluded(stats.groups, pastState.correctGroups.size(), pastState.errors, pastState.score);
+            }
+            else{
+                gameInfoResponse = GameInfoResponse.error("NOT_PLAYED", "Non hai partecipato a questa partita");
+            }
+
+            GameEndNotification notification = new GameEndNotification();
+            notification.gameInfo = gameInfoResponse; 
+            notification.gameStats = gameStatsResponse;
+            notification.ranking = ranking; 
+
+            udpNotifier.notifyOne(address, notification);
+        }
         saveState(stateFile);
+        udpNotifier.notifyAll(userManager.getUdpClients(), "Fine partita");
     }
 
     public synchronized GameStatsResponse getGameStats(int gameId){

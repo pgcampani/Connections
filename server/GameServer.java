@@ -20,6 +20,7 @@ public class GameServer{
     private final ServerConfig config;
     private ExecutorService threadPool;
     private ScheduledExecutorService scheduler; 
+    private UDPNotifier udpNotifier = new UDPNotifier(); 
 
     public GameServer(ServerConfig config){
         this.config = config;  
@@ -31,11 +32,10 @@ public class GameServer{
         int persistenceInterval = config.getPersistenceInterval(); 
         int gameDuration = config.getGameDuration(); 
         UserManager userManager = new UserManager(config.getUsersFile()); 
-        
         int nextGameIndex = 0;
         ConcurrentHashMap<Integer, GameStats> gameStats = null; 
         File stateFile = new File(config.getGameStateFile());
-
+        
         if(stateFile.exists()){
             try(FileReader reader = new FileReader(stateFile)){
                 GameManagerState state = JsonUtils.GSON.fromJson(reader, GameManagerState.class);
@@ -51,7 +51,7 @@ public class GameServer{
 
         GameManager gameManager;
         try {
-            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex, gameStats, config.getGameStateFile());
+            gameManager = new GameManager(userManager, config.getConnectionsData(), gameDuration, nextGameIndex, gameStats, config.getGameStateFile(), udpNotifier);
             gameManager.start();
         }
         catch(IOException e){

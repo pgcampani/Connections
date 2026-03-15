@@ -1,5 +1,5 @@
 {
-  "nextGameIndex": 3,
+  "nextGameIndex": 8,
   "gameStats": {
     "0": {
       "gameId": 0,
@@ -135,6 +135,236 @@
             "STOOGE",
             "KING",
             "TENOR"
+          ]
+        }
+      ]
+    },
+    "3": {
+      "gameId": 3,
+      "totalPlayers": 0,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "SNEAKER BRANDS",
+          "words": [
+            "PUMA",
+            "NIKE",
+            "REEBOK",
+            "ADIDAS"
+          ]
+        },
+        {
+          "theme": "MUSICALS BEGINNING WITH “C”",
+          "words": [
+            "CATS",
+            "CAROUSEL",
+            "CHICAGO",
+            "CABARET"
+          ]
+        },
+        {
+          "theme": "CLEANING VERBS",
+          "words": [
+            "DUST",
+            "MOP",
+            "SWEEP",
+            "VACUUM"
+          ]
+        },
+        {
+          "theme": "___ MAN SUPERHEROES",
+          "words": [
+            "SPIDER",
+            "IRON",
+            "SUPER",
+            "BAT"
+          ]
+        }
+      ]
+    },
+    "4": {
+      "gameId": 4,
+      "totalPlayers": 0,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "STREAMING SERVICES",
+          "words": [
+            "PRIME",
+            "PEACOCK",
+            "HULU",
+            "NETFLIX"
+          ]
+        },
+        {
+          "theme": "CONDIMENTS",
+          "words": [
+            "TARTAR",
+            "RELISH",
+            "KETCHUP",
+            "MAYO"
+          ]
+        },
+        {
+          "theme": "SYNONYMS FOR SAD",
+          "words": [
+            "BLUE",
+            "GLUM",
+            "DOWN",
+            "LOW"
+          ]
+        },
+        {
+          "theme": "CLUE CHARACTERS",
+          "words": [
+            "MUSTARD",
+            "PLUM",
+            "GREEN",
+            "SCARLET"
+          ]
+        }
+      ]
+    },
+    "5": {
+      "gameId": 5,
+      "totalPlayers": 0,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "MONOPOLY SQUARES",
+          "words": [
+            "GO",
+            "CHANCE",
+            "JAIL",
+            "BOARDWALK"
+          ]
+        },
+        {
+          "theme": "SHADES OF BLUE",
+          "words": [
+            "BABY",
+            "ROYAL",
+            "MIDNIGHT",
+            "POWDER"
+          ]
+        },
+        {
+          "theme": "RAPPERS",
+          "words": [
+            "FUTURE",
+            "ICE CUBE",
+            "Q-TIP",
+            "COMMON"
+          ]
+        },
+        {
+          "theme": "MEMBERS OF A SEPTET",
+          "words": [
+            "WONDER",
+            "SIN",
+            "SEA",
+            "SISTER"
+          ]
+        }
+      ]
+    },
+    "6": {
+      "gameId": 6,
+      "totalPlayers": 0,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "LEG PARTS",
+          "words": [
+            "KNEE",
+            "ANKLE",
+            "SHIN",
+            "THIGH"
+          ]
+        },
+        {
+          "theme": "BABY ANIMALS",
+          "words": [
+            "CUB",
+            "JOEY",
+            "CALF",
+            "KID"
+          ]
+        },
+        {
+          "theme": "SLANG FOR TOILET",
+          "words": [
+            "JOHN",
+            "THRONE",
+            "HEAD",
+            "CAN"
+          ]
+        },
+        {
+          "theme": "___ FISH THAT AREN’T FISH",
+          "words": [
+            "STAR",
+            "SILVER",
+            "JELLY",
+            "CRAY"
+          ]
+        }
+      ]
+    },
+    "7": {
+      "gameId": 7,
+      "totalPlayers": 0,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "conculded": true,
+      "groups": [
+        {
+          "theme": "BOARD GAMES",
+          "words": [
+            "CHESS",
+            "GO",
+            "CHECKERS",
+            "BACKGAMMON"
+          ]
+        },
+        {
+          "theme": "MATTRESS SIZES",
+          "words": [
+            "KING",
+            "TWIN",
+            "QUEEN",
+            "FULL"
+          ]
+        },
+        {
+          "theme": "THINGS THAT ARE RED",
+          "words": [
+            "FIRE TRUCK",
+            "RUBY",
+            "CHERRY",
+            "STOP SIGN"
+          ]
+        },
+        {
+          "theme": "THINGS WITH KEYS",
+          "words": [
+            "LOCKSMITH",
+            "PIANO",
+            "FLORIDA",
+            "CRYPTOGRAPHY"
           ]
         }
       ]

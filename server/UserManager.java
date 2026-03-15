@@ -6,18 +6,23 @@ import messages.JsonUtils;
 
 import java.io.*; 
 import java.lang.reflect.Type; 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List; 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map; 
 import java.util.concurrent.ConcurrentHashMap; 
 
+import messages.responses.LeaderboardEntry;
 import server.game.PlayerGameState;
 import server.game.GameStats; 
 
 public class UserManager{
     private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>(); 
     private final String usersFile; 
+    private final ConcurrentHashMap<String, SocketAddress> udpClients = new ConcurrentHashMap<>();
 
     public UserManager(String usersFile){
         this.usersFile = usersFile; 
@@ -67,6 +72,8 @@ public class UserManager{
             user.currentGameid = -1;
             user.isLogged = false;  
         }
+
+        unregisterUdpClient(username);
     }
 
     public void logoutAll(){
@@ -75,6 +82,7 @@ public class UserManager{
                 user.isLogged = false;
                 user.currentGameid = -1; 
             }
+            unregisterUdpClient(user.username);
         }
     }
 
@@ -249,5 +257,36 @@ public class UserManager{
 
     public User getUser(String username){
         return users.get(username); 
+    }
+
+    // UDP
+    public void registerUdpClient(String username, InetAddress address, int udpPort){
+        udpClients.put(username, new InetSocketAddress(address, udpPort));
+    }
+
+    public void unregisterUdpClient(String username){
+        udpClients.remove(username);
+    }
+
+    public ConcurrentHashMap<String, SocketAddress> getUdpClients(){
+        return udpClients; 
+    }
+
+    public List<LeaderboardEntry> getGameRanking(int gameId){
+        List<Map.Entry<String, User>> players = new ArrayList<>(); 
+        for(Map.Entry<String, User> entry : users.entrySet()){
+            PlayerGameState state = entry.getValue().pastGames.get(gameId);
+            if(state != null){
+                players.add(entry); 
+            } 
+        }
+        Collections.sort(players, (a,b) -> b.getValue().pastGames.get(gameId).score - a.getValue().pastGames.get(gameId).score);
+        List<LeaderboardEntry> ranking = new ArrayList<>(); 
+        for(int i = 0; i < players.size(); i++){
+            Map.Entry<String, User> entry = players.get(i); 
+            PlayerGameState state = entry.getValue().pastGames.get(gameId);
+            ranking.add(new LeaderboardEntry(i+1, entry.getKey(), state.score));
+        }
+        return ranking;
     }
 }
