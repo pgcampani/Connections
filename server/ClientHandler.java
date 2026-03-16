@@ -175,19 +175,20 @@ public class ClientHandler implements Runnable{
                 }
 
             case "WRONG_PASSWORD":
-                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Password errata"));
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Password errata"));
                 break;
 
             case "USERNAME_TAKEN":
-                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Username occupato"));
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Username occupato"));
                 break; 
 
             case "USER_NOT_FOUND":
-                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Username inesistente"));
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Username inesistente"));
                 break;
 
             case "USER_ALREADY_LOGGED":
-                NetworkUtils.TCPsend(out, new ServerResponse("Error", "Utente gia' loggato"));
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Utente gia' loggato"));
+                break; 
 
             default:
                 break;

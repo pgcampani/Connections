@@ -220,7 +220,7 @@ public class UserManager{
         user.mistakeHistogram[state.errors]++; 
     }
 
-    public void addLoggedUsersToGame(int gameId, GameStats stats){
+    public synchronized void addLoggedUsersToGame(int gameId, GameStats stats){
         for(User user : users.values()){
             if(user.isLogged){
                 user.currentGameState = new PlayerGameState(gameId);

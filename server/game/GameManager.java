@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList; 
 import java.util.Map; 
-import java.util.Collection;
-import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.Executors; 
 import java.util.concurrent.ScheduledExecutorService; 
 import java.util.concurrent.TimeUnit;
@@ -291,10 +289,6 @@ public class GameManager{
     }
 
     public synchronized GameStatsResponse getGameStats(int gameId){
-
-        if(currentGame == null){
-            return GameStatsResponse.error("NO_GAME", "Nessuna partita in corso");
-        }
 
         if(currentGame != null && currentGame.gameId == gameId){
 
