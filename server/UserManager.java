@@ -175,11 +175,9 @@ public class UserManager{
                     user.gamesPlayed++; 
                     user.currentStreak = 0; 
                     user.mistakeHistogram[5]++;
-                     // aggiorna statische partita
+                     // aggiorna statistiche partita
                     if(stats != null){
-                        if(!state.finished){
-                            stats.finalizePlayer(state.hasWon(), state.score, state.finished);
-                        }
+                        stats.finalizePlayer(state.hasWon(), state.score, state.finished);
                     } 
                 }
                

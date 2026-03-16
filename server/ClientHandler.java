@@ -18,11 +18,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
-import java.util.ArrayList;
-
-import server.game.GameStats;
 
 
 public class ClientHandler implements Runnable{
@@ -107,22 +103,19 @@ public class ClientHandler implements Runnable{
         finally{
             if(loggedUsername != null){
                 userManager.logout(loggedUsername);
-                userManager.unregisterUdpClient(loggedUsername); 
                 System.out.println("Logout automatico effettuato per " + loggedUsername); 
             }
         }
     }
 
-    private String handleRegister(String message, PrintWriter out){
+    private void handleRegister(String message, PrintWriter out){
         RegisterMessage request = JsonUtils.GSON.fromJson(message, RegisterMessage.class);
 
         if(userManager.register(request.name.trim(), request.password.trim())){
             NetworkUtils.TCPsend(out, new ServerResponse("OK", "Registrazione avvenuta con successo"));
-            return request.name.trim(); 
         }
         else{
             NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Username occupato"));
-            return null; 
         }
     }
 
@@ -319,6 +312,7 @@ public class ClientHandler implements Runnable{
             stats.lossRate = (double) user.gameLost / user.gamesPlayed * 100;
         }
         stats.currentStreak = user.currentStreak; 
+        stats.maxStreak = user.maxStreak; 
         stats.perfectPuzzles = user.perfectPuzzles; 
         stats.mistakeHistogram = user.mistakeHistogram; 
 

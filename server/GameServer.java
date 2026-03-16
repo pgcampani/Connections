@@ -20,7 +20,7 @@ public class GameServer{
     private final ServerConfig config;
     private ExecutorService threadPool;
     private ScheduledExecutorService scheduler; 
-    private UDPNotifier udpNotifier = new UDPNotifier(); 
+    private final UDPNotifier udpNotifier = new UDPNotifier(); 
 
     public GameServer(ServerConfig config){
         this.config = config;  

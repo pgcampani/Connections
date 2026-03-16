@@ -10,7 +10,7 @@ public class GameStats{
     public int finishedPlayers; 
     public int wonPlayers; 
     public double totalScore; 
-    public boolean conculded;
+    public boolean concluded;
     public List<Group> groups; 
 
     public GameStats(int gameId){
@@ -19,7 +19,7 @@ public class GameStats{
         this.finishedPlayers = 0; 
         this.wonPlayers = 0; 
         this.totalScore = 0.0;
-        this.conculded = false;
+        this.concluded = false;
     }
 
     public void addPlayer(){

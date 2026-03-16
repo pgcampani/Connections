@@ -12,15 +12,10 @@ import java.util.Scanner;
 public class ClientMain{
     
     private static int server_tcp_port; 
-    private static int server_udp_port;
     private static String server_host;  
     private static boolean is_logged = false; 
     public static void main(String[] args){
         readConfig("config/ClientConfig.properties");
-
-        System.out.println("server.host: " + server_host);
-        System.out.println("server.tcp.port: " + server_tcp_port);
-        System.out.println("server.udp.port: " + server_udp_port);
 
         try(SocketChannel socketChannel = SocketChannel.open()){
             socketChannel.configureBlocking(true); 
@@ -128,6 +123,8 @@ public class ClientMain{
                             System.out.println(">  update credential");
                             System.out.println(">  submit proposal");
                             System.out.println(">  request game info"); 
+                            System.out.println(">  game stats");
+                            System.out.println(">  player stats"); 
                             System.out.println(">  leaderboard"); 
                             System.out.println(">  exit");
                             break;
@@ -140,7 +137,7 @@ public class ClientMain{
             }
         }
         catch(IOException e){
-            System.err.println("[CLIENT] Errore connessione: " + e.getMessage());
+            System.err.println("Errore connessione: " + e.getMessage());
             System.exit(0); 
         }
     }
@@ -153,7 +150,6 @@ public class ClientMain{
             prop.load(input); 
             server_host = prop.getProperty("server.host");
             server_tcp_port = Integer.parseInt(prop.getProperty("server.tcp.port"));
-            server_udp_port = Integer.parseInt(prop.getProperty("server.udp.port"));
         }    
         catch(IOException ex){
             System.err.println("[CLIENT]: Errore lettura file di configurazione"); 

@@ -1,44 +1,44 @@
 {
-  "piggi": {
-    "username": "piggi",
-    "password": "pollo",
-    "totalScore": -10,
+  "magi": {
+    "username": "magi",
+    "password": "cavolo",
+    "totalScore": -2,
     "gamesPlayed": 3,
     "gamesWon": 0,
     "pastGames": {
-      "0": {
-        "gameId": 0,
+      "11": {
+        "gameId": 11,
         "errors": 0,
-        "score": 6,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "12": {
+        "gameId": 12,
+        "errors": 2,
+        "score": -2,
         "finished": true,
         "correctGroups": [
           {
-            "theme": "NBA TEAMS",
+            "theme": "SILENT “G”",
             "words": [
-              "HEAT",
-              "BUCKS",
-              "JAZZ",
-              "NETS"
+              "GNOME",
+              "GNOCCHI",
+              "GNAW",
+              "GNAT"
             ]
           }
         ]
       },
-      "1": {
-        "gameId": 1,
-        "errors": 4,
-        "score": -16,
-        "finished": true,
-        "correctGroups": []
-      },
-      "2": {
-        "gameId": 2,
+      "13": {
+        "gameId": 13,
         "errors": 0,
         "score": 0,
         "finished": true,
         "correctGroups": []
       }
     },
-    "gameLost": 1,
+    "gameLost": 0,
     "currentStreak": 0,
     "maxStreak": 0,
     "perfectPuzzles": 0,
@@ -47,8 +47,314 @@
       0,
       0,
       0,
-      1,
-      2
+      0,
+      3
+    ]
+  },
+  "piggi": {
+    "username": "piggi",
+    "password": "pollo",
+    "totalScore": 92,
+    "gamesPlayed": 14,
+    "gamesWon": 4,
+    "pastGames": {
+      "1": {
+        "gameId": 1,
+        "errors": 0,
+        "score": 18,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "FOOTWEAR",
+            "words": [
+              "PUMP",
+              "LOAFER",
+              "BOOT",
+              "SNEAKER"
+            ]
+          },
+          {
+            "theme": "MAGAZINES",
+            "words": [
+              "TIME",
+              "US",
+              "PEOPLE",
+              "ESSENCE"
+            ]
+          },
+          {
+            "theme": "UNITS OF LENGTH",
+            "words": [
+              "FOOT",
+              "LEAGUE",
+              "YARD",
+              "MILE"
+            ]
+          },
+          {
+            "theme": "LETTER HOMOPHONES",
+            "words": [
+              "SEA",
+              "WHY",
+              "ARE",
+              "QUEUE"
+            ]
+          }
+        ]
+      },
+      "2": {
+        "gameId": 2,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "4": {
+        "gameId": 4,
+        "errors": 1,
+        "score": 2,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "STREAMING SERVICES",
+            "words": [
+              "PRIME",
+              "PEACOCK",
+              "HULU",
+              "NETFLIX"
+            ]
+          }
+        ]
+      },
+      "5": {
+        "gameId": 5,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "6": {
+        "gameId": 6,
+        "errors": 0,
+        "score": 18,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "LEG PARTS",
+            "words": [
+              "KNEE",
+              "ANKLE",
+              "SHIN",
+              "THIGH"
+            ]
+          },
+          {
+            "theme": "SLANG FOR TOILET",
+            "words": [
+              "JOHN",
+              "THRONE",
+              "HEAD",
+              "CAN"
+            ]
+          },
+          {
+            "theme": "BABY ANIMALS",
+            "words": [
+              "CUB",
+              "JOEY",
+              "CALF",
+              "KID"
+            ]
+          },
+          {
+            "theme": "___ FISH THAT AREN’T FISH",
+            "words": [
+              "STAR",
+              "SILVER",
+              "JELLY",
+              "CRAY"
+            ]
+          }
+        ]
+      },
+      "7": {
+        "gameId": 7,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "8": {
+        "gameId": 8,
+        "errors": 0,
+        "score": 18,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "SPORTS",
+            "words": [
+              "SQUASH",
+              "CRICKET",
+              "POLO",
+              "FENCING"
+            ]
+          },
+          {
+            "theme": "TOPS",
+            "words": [
+              "TEE",
+              "TANK",
+              "CAMI",
+              "HALTER"
+            ]
+          },
+          {
+            "theme": "VEGETABLES",
+            "words": [
+              "CARROT",
+              "CORN",
+              "ONION",
+              "BEET"
+            ]
+          },
+          {
+            "theme": "INSECTS",
+            "words": [
+              "ANT",
+              "MANTIS",
+              "BEETLE",
+              "TERMITE"
+            ]
+          }
+        ]
+      },
+      "9": {
+        "gameId": 9,
+        "errors": 0,
+        "score": 18,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "FRUIT",
+            "words": [
+              "KIWI",
+              "ORANGE",
+              "DATE",
+              "LEMON"
+            ]
+          },
+          {
+            "theme": "COUNTRIES",
+            "words": [
+              "JORDAN",
+              "GEORGIA",
+              "TOGO",
+              "CHAD"
+            ]
+          },
+          {
+            "theme": "ZODIAC SYMBOLS",
+            "words": [
+              "TWINS",
+              "GOAT",
+              "SCALES",
+              "FISH"
+            ]
+          },
+          {
+            "theme": "BIRDS",
+            "words": [
+              "TURKEY",
+              "JAY",
+              "CRANE",
+              "SWALLOW"
+            ]
+          }
+        ]
+      },
+      "10": {
+        "gameId": 10,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "11": {
+        "gameId": 11,
+        "errors": 0,
+        "score": 6,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "ANIMAL GROUP NAMES",
+            "words": [
+              "SCHOOL",
+              "PACK",
+              "FLOCK",
+              "POD"
+            ]
+          }
+        ]
+      },
+      "12": {
+        "gameId": 12,
+        "errors": 0,
+        "score": 12,
+        "finished": true,
+        "correctGroups": [
+          {
+            "theme": "HOMOPHONES",
+            "words": [
+              "KNEW",
+              "NEW",
+              "NU",
+              "GNU"
+            ]
+          },
+          {
+            "theme": "SILENT “G”",
+            "words": [
+              "GNOME",
+              "GNOCCHI",
+              "GNAW",
+              "GNAT"
+            ]
+          }
+        ]
+      },
+      "13": {
+        "gameId": 13,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "14": {
+        "gameId": 14,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "15": {
+        "gameId": 15,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      }
+    },
+    "gameLost": 0,
+    "currentStreak": 0,
+    "maxStreak": 2,
+    "perfectPuzzles": 4,
+    "mistakeHistogram": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      10
     ]
   }
 }

@@ -7,8 +7,8 @@ import messages.responses.*;
 import messages.Group; 
 
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.nio.ByteBuffer;
-import java.nio.channels.NetworkChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Scanner;
 import java.util.List; 
@@ -49,18 +49,28 @@ public class ClientCommands{
             return false; 
         }
 
-        NetworkUtils.NIOsend(socketChannel, write_b, new LoginMessage(username, password));
+        DatagramSocket udpSocket = new DatagramSocket(0); 
+        int udpPort = udpSocket.getLocalPort(); 
+
+        NetworkUtils.NIOsend(socketChannel, write_b, new LoginMessage(username, password, udpPort));
         String raw = NetworkUtils.NIOreceive(socketChannel, read_b);
         ServerResponse response = JsonUtils.GSON.fromJson(raw, ServerResponse.class);
 
         if(response.status.equals("OK")){
+
+            // Avvio thread UDPListener
+            Thread udpThread = new Thread(new UDPListener(udpSocket));
+            udpThread.setDaemon(true);
+            udpThread.start(); 
+
             System.out.println(response.message);
 
             String infoRaw = NetworkUtils.NIOreceive(socketChannel, read_b);
             GameInfoResponse gameInfo = JsonUtils.GSON.fromJson(infoRaw, GameInfoResponse.class);
 
             if(gameInfo.status.equals("IN_PROGRESS")){
-                System.out.println("Partita in corso. ID partita: " + gameInfo.gameId);
+                System.out.println("\n=== PARTITA IN CORSO ===");
+                System.out.println("ID partita: " + gameInfo.gameId);
                 System.out.println("Parole:");
                 for(int i = 0; i < gameInfo.remainingWords.size(); i++){
                     System.out.printf("%-15s", gameInfo.remainingWords.get(i));
@@ -72,8 +82,10 @@ public class ClientCommands{
                 System.out.println("Errori: " + gameInfo.errors);
                 System.out.println("Punteggio: " + gameInfo.score);
                 System.out.println("Tempo rimanente: " + gameInfo.timeRemaining / 1000 + " secondi");
+                System.out.println("==========================="); 
             }
             else{
+                udpSocket.close(); 
                 System.out.println(gameInfo.message); 
             }
             return true;
@@ -163,6 +175,7 @@ public class ClientCommands{
 
         switch(response.status){
             case "IN_PROGRESS":
+                System.out.println("\n=== GAME INFO ===");
                 System.out.println("Partita in corso. ID partita: " + response.gameId);
                 System.out.println("Tempo rimanente " + response.timeRemaining / 1000 + " secondi");
                 System.out.println("Errori: " + response.errors);
@@ -178,9 +191,11 @@ public class ClientCommands{
                         System.out.println();
                     } 
                 }
+                System.out.println("==========================="); 
                 break;
             
             case "CONCLUDED":
+                System.out.println("\n=== GAME INFO ==="); 
                 System.out.println("Partita conclusa");
                 System.out.println("Gruppi corretti trovati: " + response.correctCount);
                 System.out.println("Errori: " + response.errors);
@@ -189,6 +204,7 @@ public class ClientCommands{
                 for(Group group : response.groups){
                     System.out.println(" " + group.theme + ": " + group.words);
                 }
+                System.out.println("==========================="); 
                 break;
 
             case "GAME_NOT_FOUND":
@@ -214,18 +230,21 @@ public class ClientCommands{
 
         switch(response.status){
             case "IN_PROGRESS":
+                System.out.println("\n=== GAME STATS ===");
                 System.out.println("Tempo rimanente: " + response.timeRemaining / 1000 + " secondi");
                 System.out.println("Giocatori in partita: " + response.playerInGame); 
                 System.out.println("Giocatori che hanno terminato la partita: " + response.playerFinished);
                 System.out.println("Numero vincitori: " + response.playerWinners);
+                System.out.println("==========================="); 
                 break; 
             
             case "CONCLUDED":
-                //int playerCount, int playerFinished, int playerWinners, double avgPointsGame
+                System.out.println("\n=== GAME STATS ==="); 
                 System.out.println("Giocatori che hanno giocato: " + response.playerCount); 
                 System.out.println("Giocatori che hanno terminato la partita: " + response.playerFinished); 
                 System.out.println("Numero vincitori: " + response.playerWinners);
                 System.out.println("Media punti totale: " + response.avgPointsGame);
+                System.out.println("==========================="); 
                 break; 
 
             case "NO_GAME": 
@@ -240,7 +259,7 @@ public class ClientCommands{
 
     public static void handleLeaderboard(Scanner scanner, SocketChannel socketChannel, ByteBuffer w_buffer, ByteBuffer r_buffer) throws IOException{
         
-        System.out.println("Inserisci indice");
+        System.out.println("\nInserisci indice");
         System.out.println("1.  Classifica completa");
         System.out.println("2.  Top K giocatori");
         System.out.println("3.  Posizione di un giocatore"); 
@@ -275,9 +294,11 @@ public class ClientCommands{
         LeaderboardResponse response = JsonUtils.GSON.fromJson(raw, LeaderboardResponse.class);
 
         if(response.status.equals("OK")){
+            System.out.println("\n=== LEADERBOARD ==="); 
             for(LeaderboardEntry entry : response.entries){
                 System.out.printf("%d. %-15s %d punti%n", entry.rank, entry.username, entry.score);        
             }
+            System.out.println("==========================="); 
         }
         else{
             System.out.println("Errore " + response.message); 

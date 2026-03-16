@@ -3,7 +3,7 @@ package server;
 import server.game.GameManager;
 
 public class PersistenceTask implements Runnable{
-    public final UserManager userManager;
+    private final UserManager userManager;
     private final GameManager gameManager; 
     private final String stateFile; 
 

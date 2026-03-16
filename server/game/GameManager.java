@@ -80,8 +80,9 @@ public class GameManager{
             userManager.addLoggedUsersToGame(game.gameId, stats);
 
             long timeRemaining = currentGame.endTime - System.currentTimeMillis();
-            GameInfoResponse notification = GameInfoResponse.inProgress(timeRemaining, new ArrayList<>(), shuffledWords, 0, 0, currentGame.gameId);
             // Notifica nuova partita
+            NewGameNotification notification = new NewGameNotification(); 
+            notification.gameInfo = GameInfoResponse.inProgress(timeRemaining, new ArrayList<>(), shuffledWords, 0, 0, currentGame.gameId);
             udpNotifier.notifyAll(userManager.getUdpClients(), notification);
 
             System.out.println("Nuova partita avviata " + game.gameId); 
@@ -250,14 +251,14 @@ public class GameManager{
         return "WRONG"; 
     }
 
-    public void endGame(){
+    public synchronized void endGame(){
         if(currentGame == null){
             return;
         }
         GameStats stats = gameStats.computeIfAbsent(currentGame.gameId, GameStats::new);
         stats.groups = currentGame.groups; 
         userManager.finalizeGame(currentGame.gameId, stats);
-        stats.conculded = true;
+        stats.concluded = true;
 
         List<LeaderboardEntry> ranking = userManager.getGameRanking(currentGame.gameId);
 
@@ -287,7 +288,6 @@ public class GameManager{
             udpNotifier.notifyOne(address, notification);
         }
         saveState(stateFile);
-        udpNotifier.notifyAll(userManager.getUdpClients(), "Fine partita");
     }
 
     public synchronized GameStatsResponse getGameStats(int gameId){

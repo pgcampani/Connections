@@ -6,7 +6,6 @@ import java.util.Properties;
 
 public class ServerConfig{
     private int tcp_port;
-    private int udp_port; 
     private int poolSize; 
     private int gameDuration; 
     private String connectionsData;
@@ -22,7 +21,6 @@ public class ServerConfig{
             props.load(fis); 
 
             config.tcp_port = Integer.parseInt(props.getProperty("server.tcp.port"));
-            config.udp_port = Integer.parseInt(props.getProperty("server.udp.port"));
             config.poolSize = Integer.parseInt(props.getProperty("server.threadpool.size"));
             config.gameDuration = Integer.parseInt(props.getProperty("server.game.duration"));
             config.usersFile = props.getProperty("server.users.file"); 
@@ -31,18 +29,15 @@ public class ServerConfig{
             config.gameStateFile = props.getProperty("server.game.state.file"); 
         }
         catch(IOException e){
-            e.printStackTrace();
-        }
+            System.err.println("Errore lettura configurazione: " + e.getMessage());
+            System.exit(1);
+        }   
         
         return config; 
     }
 
     public int getTcpPort(){
         return tcp_port;
-    }
-
-    public int getUdpPort(){
-        return udp_port;
     }
 
     public int getPoolSize(){
