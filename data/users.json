@@ -2,8 +2,8 @@
   "magi": {
     "username": "magi",
     "password": "cavolo",
-    "totalScore": -2,
-    "gamesPlayed": 3,
+    "totalScore": -6,
+    "gamesPlayed": 6,
     "gamesWon": 0,
     "pastGames": {
       "11": {
@@ -36,6 +36,27 @@
         "score": 0,
         "finished": true,
         "correctGroups": []
+      },
+      "17": {
+        "gameId": 17,
+        "errors": 1,
+        "score": -4,
+        "finished": true,
+        "correctGroups": []
+      },
+      "18": {
+        "gameId": 18,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "19": {
+        "gameId": 19,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
       }
     },
     "gameLost": 0,
@@ -48,14 +69,14 @@
       0,
       0,
       0,
-      3
+      6
     ]
   },
   "piggi": {
     "username": "piggi",
     "password": "pollo",
-    "totalScore": 92,
-    "gamesPlayed": 14,
+    "totalScore": 88,
+    "gamesPlayed": 16,
     "gamesWon": 4,
     "pastGames": {
       "1": {
@@ -342,6 +363,20 @@
         "score": 0,
         "finished": true,
         "correctGroups": []
+      },
+      "17": {
+        "gameId": 17,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "18": {
+        "gameId": 18,
+        "errors": 1,
+        "score": -4,
+        "finished": true,
+        "correctGroups": []
       }
     },
     "gameLost": 0,
@@ -354,7 +389,7 @@
       0,
       0,
       0,
-      10
+      12
     ]
   }
 }

@@ -1,5 +1,5 @@
 {
-  "nextGameIndex": 17,
+  "nextGameIndex": 20,
   "gameStats": {
     "0": {
       "gameId": 0,
@@ -779,6 +779,144 @@
             "LOVE",
             "RIGHT",
             "ACUTE"
+          ]
+        }
+      ]
+    },
+    "17": {
+      "gameId": 17,
+      "totalPlayers": 2,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": -4.0,
+      "concluded": true,
+      "groups": [
+        {
+          "theme": "\"MUSCLES, INFORMALLY\"",
+          "words": [
+            "QUAD",
+            "LAT",
+            "TRI",
+            "PEC"
+          ]
+        },
+        {
+          "theme": "AWARDS",
+          "words": [
+            "CUP",
+            "RIBBON",
+            "MEDAL",
+            "TROPHY"
+          ]
+        },
+        {
+          "theme": "TITLE TV DOCTORS",
+          "words": [
+            "GREY",
+            "HOUSE",
+            "QUINN",
+            "HOWSER"
+          ]
+        },
+        {
+          "theme": "NFL PLAYERS",
+          "words": [
+            "BILL",
+            "BEAR",
+            "COMMANDER",
+            "BROWN"
+          ]
+        }
+      ]
+    },
+    "18": {
+      "gameId": 18,
+      "totalPlayers": 2,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": -4.0,
+      "concluded": true,
+      "groups": [
+        {
+          "theme": "OFF-WHITE SHADES",
+          "words": [
+            "CREAM",
+            "EGGSHELL",
+            "VANILLA",
+            "IVORY"
+          ]
+        },
+        {
+          "theme": "ANTI-VAMPIRE",
+          "words": [
+            "GARLIC",
+            "MIRROR",
+            "STAKE",
+            "CRUCIFIX"
+          ]
+        },
+        {
+          "theme": "KINDS OF MEAT",
+          "words": [
+            "PORK",
+            "BEEF",
+            "POULTRY",
+            "VENISON"
+          ]
+        },
+        {
+          "theme": "SYNONYMS FOR ARGUMENT",
+          "words": [
+            "ROW",
+            "SPAT",
+            "TIFF",
+            "QUARREL"
+          ]
+        }
+      ]
+    },
+    "19": {
+      "gameId": 19,
+      "totalPlayers": 1,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "concluded": true,
+      "groups": [
+        {
+          "theme": "GRAINS",
+          "words": [
+            "OAT",
+            "BARLEY",
+            "SPELT",
+            "RYE"
+          ]
+        },
+        {
+          "theme": "ROYAL AND NOBLE TITLES",
+          "words": [
+            "KING",
+            "EARL",
+            "BARON",
+            "PRINCE"
+          ]
+        },
+        {
+          "theme": "UNIVERSITIES",
+          "words": [
+            "RICE",
+            "DUKE",
+            "BROWN",
+            "HOWARD"
+          ]
+        },
+        {
+          "theme": "BEST DIRECTOR OSCAR WINNERS",
+          "words": [
+            "STONE",
+            "BONG",
+            "FORD",
+            "LEE"
           ]
         }
       ]

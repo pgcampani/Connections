@@ -56,17 +56,16 @@ public class ClientCommands{
         String raw = NetworkUtils.NIOreceive(socketChannel, read_b);
         ServerResponse response = JsonUtils.GSON.fromJson(raw, ServerResponse.class);
 
-        if(response.status.equals("OK")){
-
-            // Avvio thread UDPListener
-            Thread udpThread = new Thread(new UDPListener(udpSocket));
-            udpThread.setDaemon(true);
-            udpThread.start(); 
-
+        if(response.status.equals("OK")){ 
             System.out.println(response.message);
 
             String infoRaw = NetworkUtils.NIOreceive(socketChannel, read_b);
             GameInfoResponse gameInfo = JsonUtils.GSON.fromJson(infoRaw, GameInfoResponse.class);
+
+             // Avvio thread UDPListener
+            Thread udpThread = new Thread(new UDPListener(udpSocket));
+            udpThread.setDaemon(true);
+            udpThread.start();
 
             if(gameInfo.status.equals("IN_PROGRESS")){
                 System.out.println("\n=== PARTITA IN CORSO ===");

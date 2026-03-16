@@ -126,6 +126,7 @@ public class ClientMain{
                             System.out.println(">  game stats");
                             System.out.println(">  player stats"); 
                             System.out.println(">  leaderboard"); 
+                            System.out.println(">  logout");
                             System.out.println(">  exit");
                             break;
                         
