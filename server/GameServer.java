@@ -18,9 +18,9 @@ import server.game.GameManagerState;
 
 public class GameServer{
     private final ServerConfig config;
-    private ExecutorService threadPool;
-    private ScheduledExecutorService scheduler; 
-    private final UDPNotifier udpNotifier = new UDPNotifier(); 
+    private ExecutorService threadPool; // Threadpool per i client connessi
+    private ScheduledExecutorService scheduler; // Scheduler per persistenza periodica dei dati
+    private final UDPNotifier udpNotifier = new UDPNotifier();  // Notifier UDP per messaggi asincroni
 
     public GameServer(ServerConfig config){
         this.config = config;  
@@ -63,13 +63,17 @@ public class GameServer{
 
         scheduler = Executors.newScheduledThreadPool(1); 
         scheduler.scheduleAtFixedRate(new PersistenceTask(userManager,gameManager, config.getGameStateFile()), persistenceInterval, persistenceInterval, TimeUnit.SECONDS); 
+        
+        // Chiusura oridnata in caso di Ctrl+C
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable(){
             @Override
             public void run(){
+                // Smette di accettare nuovi task
                 threadPool.shutdown();
                 scheduler.shutdown();
                 gameManager.stop(); 
                 try{
+                    // Aspetta che i task in corso terminino
                     if(!threadPool.awaitTermination(10, TimeUnit.SECONDS)) threadPool.shutdownNow();
                     if(!scheduler.awaitTermination(5, TimeUnit.SECONDS)) scheduler.shutdownNow();
                 } catch(InterruptedException e){
@@ -77,6 +81,7 @@ public class GameServer{
                     scheduler.shutdownNow();
                     Thread.currentThread().interrupt();
                 }
+                // Termina la partita in corso e salva tutto
                 gameManager.endGame(); 
                 userManager.logoutAll();
                 userManager.saveUsers();
@@ -85,6 +90,8 @@ public class GameServer{
             }
         }));
 
+        // Loop principale
+        // Accetta connessioni TCP e crea un ClientHandler per ognuna
         try(ServerSocket serverSocket = new ServerSocket(tcp_port)){
             while(true){
                 Socket clientSocket = serverSocket.accept();    // bloccante
@@ -97,6 +104,7 @@ public class GameServer{
             e.printStackTrace();
         }
         finally{
+            // Chiusura del pool anche in caso di eccezione
             if(!threadPool.isShutdown()) threadPool.shutdown(); 
             if(!scheduler.isShutdown()) scheduler.shutdown();
         }

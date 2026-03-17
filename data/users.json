@@ -2,57 +2,29 @@
   "magi": {
     "username": "magi",
     "password": "cavolo",
-    "totalScore": -6,
-    "gamesPlayed": 6,
+    "totalScore": 6,
+    "gamesPlayed": 2,
     "gamesWon": 0,
     "pastGames": {
-      "11": {
-        "gameId": 11,
+      "0": {
+        "gameId": 0,
         "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "12": {
-        "gameId": 12,
-        "errors": 2,
-        "score": -2,
+        "score": 6,
         "finished": true,
         "correctGroups": [
           {
-            "theme": "SILENT “G”",
+            "theme": "KEYBOARD KEYS",
             "words": [
-              "GNOME",
-              "GNOCCHI",
-              "GNAW",
-              "GNAT"
+              "SHIFT",
+              "TAB",
+              "RETURN",
+              "OPTION"
             ]
           }
         ]
       },
-      "13": {
-        "gameId": 13,
-        "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "17": {
-        "gameId": 17,
-        "errors": 1,
-        "score": -4,
-        "finished": true,
-        "correctGroups": []
-      },
-      "18": {
-        "gameId": 18,
-        "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "19": {
-        "gameId": 19,
+      "1": {
+        "gameId": 1,
         "errors": 0,
         "score": 0,
         "finished": true,
@@ -69,62 +41,51 @@
       0,
       0,
       0,
-      6
+      2
     ]
   },
   "piggi": {
     "username": "piggi",
     "password": "pollo",
-    "totalScore": 88,
-    "gamesPlayed": 16,
-    "gamesWon": 4,
+    "totalScore": 38,
+    "gamesPlayed": 10,
+    "gamesWon": 1,
     "pastGames": {
-      "1": {
-        "gameId": 1,
+      "0": {
+        "gameId": 0,
         "errors": 0,
-        "score": 18,
+        "score": 12,
         "finished": true,
         "correctGroups": [
           {
-            "theme": "FOOTWEAR",
+            "theme": "NBA TEAMS",
             "words": [
-              "PUMP",
-              "LOAFER",
-              "BOOT",
-              "SNEAKER"
+              "HEAT",
+              "BUCKS",
+              "JAZZ",
+              "NETS"
             ]
           },
           {
-            "theme": "MAGAZINES",
+            "theme": "KEYBOARD KEYS",
             "words": [
-              "TIME",
-              "US",
-              "PEOPLE",
-              "ESSENCE"
-            ]
-          },
-          {
-            "theme": "UNITS OF LENGTH",
-            "words": [
-              "FOOT",
-              "LEAGUE",
-              "YARD",
-              "MILE"
-            ]
-          },
-          {
-            "theme": "LETTER HOMOPHONES",
-            "words": [
-              "SEA",
-              "WHY",
-              "ARE",
-              "QUEUE"
+              "SHIFT",
+              "TAB",
+              "RETURN",
+              "OPTION"
             ]
           }
         ]
       },
-      "2": {
-        "gameId": 2,
+      "1": {
+        "gameId": 1,
+        "errors": 0,
+        "score": 0,
+        "finished": true,
+        "correctGroups": []
+      },
+      "3": {
+        "gameId": 3,
         "errors": 0,
         "score": 0,
         "finished": true,
@@ -132,8 +93,8 @@
       },
       "4": {
         "gameId": 4,
-        "errors": 1,
-        "score": 2,
+        "errors": 0,
+        "score": 6,
         "finished": true,
         "correctGroups": [
           {
@@ -157,46 +118,9 @@
       "6": {
         "gameId": 6,
         "errors": 0,
-        "score": 18,
+        "score": 0,
         "finished": true,
-        "correctGroups": [
-          {
-            "theme": "LEG PARTS",
-            "words": [
-              "KNEE",
-              "ANKLE",
-              "SHIN",
-              "THIGH"
-            ]
-          },
-          {
-            "theme": "SLANG FOR TOILET",
-            "words": [
-              "JOHN",
-              "THRONE",
-              "HEAD",
-              "CAN"
-            ]
-          },
-          {
-            "theme": "BABY ANIMALS",
-            "words": [
-              "CUB",
-              "JOEY",
-              "CALF",
-              "KID"
-            ]
-          },
-          {
-            "theme": "___ FISH THAT AREN’T FISH",
-            "words": [
-              "STAR",
-              "SILVER",
-              "JELLY",
-              "CRAY"
-            ]
-          }
-        ]
+        "correctGroups": []
       },
       "7": {
         "gameId": 7,
@@ -251,19 +175,10 @@
       },
       "9": {
         "gameId": 9,
-        "errors": 0,
-        "score": 18,
+        "errors": 1,
+        "score": 2,
         "finished": true,
         "correctGroups": [
-          {
-            "theme": "FRUIT",
-            "words": [
-              "KIWI",
-              "ORANGE",
-              "DATE",
-              "LEMON"
-            ]
-          },
           {
             "theme": "COUNTRIES",
             "words": [
@@ -271,24 +186,6 @@
               "GEORGIA",
               "TOGO",
               "CHAD"
-            ]
-          },
-          {
-            "theme": "ZODIAC SYMBOLS",
-            "words": [
-              "TWINS",
-              "GOAT",
-              "SCALES",
-              "FISH"
-            ]
-          },
-          {
-            "theme": "BIRDS",
-            "words": [
-              "TURKEY",
-              "JAY",
-              "CRANE",
-              "SWALLOW"
             ]
           }
         ]
@@ -299,97 +196,19 @@
         "score": 0,
         "finished": true,
         "correctGroups": []
-      },
-      "11": {
-        "gameId": 11,
-        "errors": 0,
-        "score": 6,
-        "finished": true,
-        "correctGroups": [
-          {
-            "theme": "ANIMAL GROUP NAMES",
-            "words": [
-              "SCHOOL",
-              "PACK",
-              "FLOCK",
-              "POD"
-            ]
-          }
-        ]
-      },
-      "12": {
-        "gameId": 12,
-        "errors": 0,
-        "score": 12,
-        "finished": true,
-        "correctGroups": [
-          {
-            "theme": "HOMOPHONES",
-            "words": [
-              "KNEW",
-              "NEW",
-              "NU",
-              "GNU"
-            ]
-          },
-          {
-            "theme": "SILENT “G”",
-            "words": [
-              "GNOME",
-              "GNOCCHI",
-              "GNAW",
-              "GNAT"
-            ]
-          }
-        ]
-      },
-      "13": {
-        "gameId": 13,
-        "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "14": {
-        "gameId": 14,
-        "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "15": {
-        "gameId": 15,
-        "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "17": {
-        "gameId": 17,
-        "errors": 0,
-        "score": 0,
-        "finished": true,
-        "correctGroups": []
-      },
-      "18": {
-        "gameId": 18,
-        "errors": 1,
-        "score": -4,
-        "finished": true,
-        "correctGroups": []
       }
     },
     "gameLost": 0,
     "currentStreak": 0,
-    "maxStreak": 2,
-    "perfectPuzzles": 4,
+    "maxStreak": 1,
+    "perfectPuzzles": 1,
     "mistakeHistogram": [
-      4,
+      1,
       0,
       0,
       0,
       0,
-      12
+      9
     ]
   }
 }

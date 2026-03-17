@@ -38,7 +38,7 @@ public class ClientCommands{
         } 
     }
 
-    public static boolean handleLogin(Scanner scanner, SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
+    public static DatagramSocket handleLogin(Scanner scanner, SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
         System.out.print("Username ");
         String username = scanner.nextLine().trim(); 
         System.out.print("Password "); 
@@ -46,7 +46,7 @@ public class ClientCommands{
 
         if(username.isEmpty() || password.isEmpty()){
             System.out.println("Errore: i campi Username e Password non possono essere vuoti");
-            return false; 
+            return null; 
         }
 
         DatagramSocket udpSocket = new DatagramSocket(0); 
@@ -61,11 +61,6 @@ public class ClientCommands{
 
             String infoRaw = NetworkUtils.NIOreceive(socketChannel, read_b);
             GameInfoResponse gameInfo = JsonUtils.GSON.fromJson(infoRaw, GameInfoResponse.class);
-
-             // Avvio thread UDPListener
-            Thread udpThread = new Thread(new UDPListener(udpSocket));
-            udpThread.setDaemon(true);
-            udpThread.start();
 
             if(gameInfo.status.equals("IN_PROGRESS")){
                 System.out.println("\n=== PARTITA IN CORSO ===");
@@ -84,14 +79,14 @@ public class ClientCommands{
                 System.out.println("==========================="); 
             }
             else{
-                udpSocket.close(); 
                 System.out.println(gameInfo.message); 
             }
-            return true;
+            return udpSocket;
         }
         else{
             System.out.println("Errore: " + response.message);
-            return false;
+            udpSocket.close();
+            return null;
         }
     }
 

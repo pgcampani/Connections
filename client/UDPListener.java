@@ -7,6 +7,7 @@ import com.google.gson.*;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
 
@@ -20,12 +21,17 @@ public class UDPListener implements Runnable{
 
     @Override
     public void run(){
-        try(DatagramSocket socket = udpSocket){
-            while(!Thread.currentThread().isInterrupted()){
-                byte[] buffer = new byte[65535];
+        byte[] buffer = new byte[65535];
 
+        try{
+            while(!udpSocket.isClosed()){
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                socket.receive(packet);
+                try {
+                    udpSocket.receive(packet);  
+                } 
+                catch(SocketException e){
+                    break;
+                }
 
                 String json = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);                
                 JsonObject obj = JsonUtils.GSON.fromJson(json, JsonObject.class);
@@ -39,6 +45,10 @@ public class UDPListener implements Runnable{
                     NewGameNotification notification = JsonUtils.GSON.fromJson(json, NewGameNotification.class);
                     printNewGame(notification); 
                 }
+                
+                System.out.print(">  "); 
+                System.out.flush();
+
             }
         }
         catch(Exception e){
@@ -90,7 +100,6 @@ public class UDPListener implements Runnable{
             }
         }
         System.out.println("===========================");
-        System.out.print(">  "); 
     }
 
 }

@@ -33,6 +33,7 @@ public class UserManager{
         
         User newUser = new User(password); 
         newUser.username = username; 
+        // Inseriamo solo se la chiave non esiste già
         User existing = users.putIfAbsent(username, newUser);
 
         if(existing != null){
@@ -76,6 +77,7 @@ public class UserManager{
         unregisterUdpClient(username);
     }
 
+    // Logout di tutti gli utenti - per shutdown del server
     public void logoutAll(){
         for(User user : users.values()){
             synchronized(user){
@@ -87,53 +89,55 @@ public class UserManager{
     }
 
 
-    public String updateCredential(String loggedUsername, String old_username, String old_psw, String new_username, String new_psw){
-        
-        synchronized(this){
-            // lock mappa
-            User user = users.get(old_username); 
+    public String updateCredential(String loggedUsername, String old_username, String old_psw, String new_username, String new_psw){    
+        if(loggedUsername == null || !loggedUsername.equals(old_username)){
+            return "UNAUTHORIZED";
+        }
 
-            if(user == null){
-                return "USER_NOT_FOUND"; 
+        User user = users.get(old_username);
+        if (user == null) return "USER_NOT_FOUND";
+
+        synchronized (user) {
+            // 2. Controllo password attuale
+            if(!user.password.equals(old_psw)){
+                return "WRONG_PASSWORD";
             }
-
-            synchronized(user){
-                // lock utente
-                
-                if(user.isLogged && !old_username.equals(loggedUsername)) return "USER_ALREADY_LOGGED";
-
-                if(!user.password.equals(old_psw)){
-                    return "WRONG_PASSWORD";
-                }
-
-                if(new_username == null || new_username.equals(old_username) && new_psw != null){
-                    user.password = new_psw; 
-                }
-                else if(new_username != null && new_psw == null){
-                    User existing = users.putIfAbsent(new_username, user);
-                    if(existing != null){
-                        return "USERNAME_TAKEN";
-                    }
-                    users.remove(old_username);
-                }
-                else if(new_username != null && new_psw != null){
-                    User existing = users.putIfAbsent(new_username, user);
-                    if(existing != null){
-                        return "USERNAME_TAKEN";
-                    }
+            // Caso 1: Cambio SOLO password (new_username è null o uguale al vecchio)
+            if(new_username == null || new_username.equals(old_username)){
+                if(new_psw != null){
                     user.password = new_psw;
-                    users.remove(old_username);
                 }
-                
                 else{
-                    return "NO_UPDATE"; 
+                    return "NO_UPDATE"; // Nessun dato nuovo fornito
+                }
+            } 
+            else{
+                // Tenta di occupare il nuovo nome in modo atomico sulla mappa
+                User existing = users.putIfAbsent(new_username, user);
+                if(existing != null){
+                    return "USERNAME_TAKEN";
+                }
+                // Rinomina riuscita: liberiamo il vecchio nome
+                users.remove(old_username);
+                user.username = new_username;
+
+                // Aggiorna anche indirizzo UDP a cui inviare notifiche asaincrone
+                SocketAddress clientAddress = udpClients.remove(old_username);
+                if(clientAddress != null){
+                    udpClients.put(new_username, clientAddress); 
+                }
+
+                if(new_psw != null){
+                    user.password = new_psw;
                 }
             }
         }
+        // Salvataggio persistente
         saveUsers();
-        return "OK"; 
+        return "OK";
     }
 
+    // Carica utenti da file JSON 
     private void loadUsers(){
         File file = new File(usersFile); 
         if(!file.exists()) return; 
@@ -166,6 +170,7 @@ public class UserManager{
         }
     }
 
+    // Finaliza tutti i giocatori che ancora non hanno terminato (non hanno vinto/perso)
     public synchronized void finalizeGame(int gameId, GameStats stats){
         for(User user: users.values()){
             PlayerGameState state = user.currentGameState;
@@ -190,6 +195,7 @@ public class UserManager{
         saveUsers();
     }
 
+    // Aggiornamento statistiche per utente che vince una partita
     public synchronized void finalizeWin(String username, PlayerGameState state){
         User user = users.get(username);
         if(user == null) return;
@@ -208,7 +214,7 @@ public class UserManager{
 
     }
 
-
+    // Aggiornamento statistiche per utente che perde una partita
     public synchronized void finalizeLoss(String username, PlayerGameState state){
         User user = users.get(username);
         if(user == null) return;
@@ -220,6 +226,8 @@ public class UserManager{
         user.mistakeHistogram[state.errors]++; 
     }
 
+    // Crea un nuovo PlayerGameState per gli utenti rimasti loggati all'avvio di
+    // una nuova partita
     public synchronized void addLoggedUsersToGame(int gameId, GameStats stats){
         for(User user : users.values()){
             if(user.isLogged){
@@ -244,6 +252,7 @@ public class UserManager{
 
         int limit; 
         if(topPlayers == -1){
+            // vogliamo prendere la leaderboard globale
             limit = leaderboard.size();
         }
         else{
@@ -270,6 +279,7 @@ public class UserManager{
         return udpClients; 
     }
 
+    // Stila la classifica per una partita singola
     public List<LeaderboardEntry> getGameRanking(int gameId){
         List<Map.Entry<String, User>> players = new ArrayList<>(); 
         for(Map.Entry<String, User> entry : users.entrySet()){
@@ -278,7 +288,11 @@ public class UserManager{
                 players.add(entry); 
             } 
         }
+
+        // Ordine per punteggio decrescente
         Collections.sort(players, (a,b) -> b.getValue().pastGames.get(gameId).score - a.getValue().pastGames.get(gameId).score);
+
+        // Classifica - posizione. username. score.
         List<LeaderboardEntry> ranking = new ArrayList<>(); 
         for(int i = 0; i < players.size(); i++){
             Map.Entry<String, User> entry = players.get(i); 

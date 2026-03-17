@@ -3,6 +3,7 @@ package client;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -14,13 +15,16 @@ public class ClientMain{
     private static int server_tcp_port; 
     private static String server_host;  
     private static boolean is_logged = false; 
+    private static DatagramSocket activeUdpSocket = null; 
     public static void main(String[] args){
         readConfig("config/ClientConfig.properties");
 
+        // Apro canale TCP verso il server - chiuso automaticamente dal try-with-resources
         try(SocketChannel socketChannel = SocketChannel.open()){
             socketChannel.configureBlocking(true); 
             socketChannel.connect(new InetSocketAddress(server_host, server_tcp_port)); 
 
+            // Buffer per invio e ricezione
             ByteBuffer write_buffer = ByteBuffer.allocate(1024); 
             ByteBuffer read_buffer = ByteBuffer.allocate(1024); 
             Scanner scanner = new Scanner(System.in); 
@@ -48,7 +52,16 @@ public class ClientMain{
                             break;
                         
                         case "login": 
-                            is_logged = ClientCommands.handleLogin(scanner, socketChannel, write_buffer, read_buffer);
+                            DatagramSocket socket = ClientCommands.handleLogin(scanner, socketChannel, write_buffer, read_buffer);
+                            
+                            if(socket != null){
+                                activeUdpSocket = socket; 
+                                is_logged = true;
+                                // Avvio thread UDPListener
+                                Thread udpThread = new Thread(new UDPListener(activeUdpSocket));
+                                udpThread.setDaemon(true);
+                                udpThread.start();
+                            }
                             break; 
                         
                         case "update credential":
@@ -83,7 +96,11 @@ public class ClientMain{
 
                         case "logout": 
                             if(ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer)){
-                                is_logged = false; 
+                                is_logged = false;
+                                if(activeUdpSocket != null){
+                                    activeUdpSocket.close();
+                                    activeUdpSocket = null; 
+                                } 
                             } 
                             break;
                         
@@ -113,6 +130,7 @@ public class ClientMain{
                         
                         case "exit":
                             ClientCommands.handleLogout(socketChannel, write_buffer, read_buffer); 
+                            if(activeUdpSocket != null) activeUdpSocket.close(); 
                             System.out.println("Disconnessione..."); 
                             return; 
 

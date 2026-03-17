@@ -22,11 +22,11 @@ public class GameStats{
         this.concluded = false;
     }
 
-    public void addPlayer(){
+    public synchronized void addPlayer(){
         totalPlayers++; 
     }
 
-    public void finalizePlayer(boolean won, int score, boolean finished){
+    public synchronized void finalizePlayer(boolean won, int score, boolean finished){
         if(finished){
             finishedPlayers++; 
         }
@@ -37,14 +37,14 @@ public class GameStats{
         totalScore += score; 
     }
 
-    public double getAverageScore(){
+    public synchronized double getAverageScore(){
         if(totalPlayers == 0){
             return 0; 
         }
         return totalScore/totalPlayers; 
     }
 
-    public int getActivePlayers(){
+    public synchronized int getActivePlayers(){
         return totalPlayers - finishedPlayers; 
     }
 }

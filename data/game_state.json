@@ -1,13 +1,13 @@
 {
-  "nextGameIndex": 20,
+  "nextGameIndex": 12,
   "gameStats": {
     "0": {
       "gameId": 0,
-      "totalPlayers": 0,
+      "totalPlayers": 2,
       "finishedPlayers": 0,
       "wonPlayers": 0,
-      "totalScore": 0.0,
-      "concluded": false,
+      "totalScore": 18.0,
+      "concluded": true,
       "groups": [
         {
           "theme": "WET WEATHER",
@@ -49,11 +49,11 @@
     },
     "1": {
       "gameId": 1,
-      "totalPlayers": 1,
-      "finishedPlayers": 1,
-      "wonPlayers": 1,
-      "totalScore": 18.0,
-      "concluded": false,
+      "totalPlayers": 2,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "concluded": true,
       "groups": [
         {
           "theme": "FOOTWEAR",
@@ -95,11 +95,11 @@
     },
     "2": {
       "gameId": 2,
-      "totalPlayers": 1,
+      "totalPlayers": 0,
       "finishedPlayers": 0,
       "wonPlayers": 0,
       "totalScore": 0.0,
-      "concluded": false,
+      "concluded": true,
       "groups": [
         {
           "theme": "FACIAL FEATURES",
@@ -141,11 +141,11 @@
     },
     "3": {
       "gameId": 3,
-      "totalPlayers": 0,
+      "totalPlayers": 1,
       "finishedPlayers": 0,
       "wonPlayers": 0,
       "totalScore": 0.0,
-      "concluded": false,
+      "concluded": true,
       "groups": [
         {
           "theme": "SNEAKER BRANDS",
@@ -190,8 +190,8 @@
       "totalPlayers": 1,
       "finishedPlayers": 0,
       "wonPlayers": 0,
-      "totalScore": 2.0,
-      "concluded": false,
+      "totalScore": 6.0,
+      "concluded": true,
       "groups": [
         {
           "theme": "STREAMING SERVICES",
@@ -237,7 +237,7 @@
       "finishedPlayers": 0,
       "wonPlayers": 0,
       "totalScore": 0.0,
-      "concluded": false,
+      "concluded": true,
       "groups": [
         {
           "theme": "MONOPOLY SQUARES",
@@ -280,10 +280,10 @@
     "6": {
       "gameId": 6,
       "totalPlayers": 1,
-      "finishedPlayers": 1,
-      "wonPlayers": 1,
-      "totalScore": 18.0,
-      "concluded": false,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 0.0,
+      "concluded": true,
       "groups": [
         {
           "theme": "LEG PARTS",
@@ -329,7 +329,7 @@
       "finishedPlayers": 0,
       "wonPlayers": 0,
       "totalScore": 0.0,
-      "concluded": false,
+      "concluded": true,
       "groups": [
         {
           "theme": "BOARD GAMES",
@@ -418,9 +418,9 @@
     "9": {
       "gameId": 9,
       "totalPlayers": 1,
-      "finishedPlayers": 1,
-      "wonPlayers": 1,
-      "totalScore": 18.0,
+      "finishedPlayers": 0,
+      "wonPlayers": 0,
+      "totalScore": 2.0,
       "concluded": true,
       "groups": [
         {
@@ -509,10 +509,10 @@
     },
     "11": {
       "gameId": 11,
-      "totalPlayers": 2,
+      "totalPlayers": 0,
       "finishedPlayers": 0,
       "wonPlayers": 0,
-      "totalScore": 6.0,
+      "totalScore": 0.0,
       "concluded": true,
       "groups": [
         {
@@ -549,374 +549,6 @@
             "SEC",
             "COT",
             "SIN"
-          ]
-        }
-      ]
-    },
-    "12": {
-      "gameId": 12,
-      "totalPlayers": 2,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": 10.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "AIRLINES",
-          "words": [
-            "FRONTIER",
-            "SPIRIT",
-            "VIRGIN",
-            "UNITED"
-          ]
-        },
-        {
-          "theme": "GREEK LETTERS",
-          "words": [
-            "IOTA",
-            "DELTA",
-            "CHI",
-            "BETA"
-          ]
-        },
-        {
-          "theme": "SILENT “G”",
-          "words": [
-            "GNOME",
-            "GNOCCHI",
-            "GNAW",
-            "GNAT"
-          ]
-        },
-        {
-          "theme": "HOMOPHONES",
-          "words": [
-            "KNEW",
-            "NEW",
-            "NU",
-            "GNU"
-          ]
-        }
-      ]
-    },
-    "13": {
-      "gameId": 13,
-      "totalPlayers": 2,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": 0.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "BEDS",
-          "words": [
-            "CANOPY",
-            "MURPHY",
-            "BUNK",
-            "TRUNDLE"
-          ]
-        },
-        {
-          "theme": "FAMOUS BROTHERS",
-          "words": [
-            "MARX",
-            "WRIGHT",
-            "JONAS",
-            "WARNER"
-          ]
-        },
-        {
-          "theme": "HONDAS",
-          "words": [
-            "PASSPORT",
-            "PILOT",
-            "ACCORD",
-            "CIVIC"
-          ]
-        },
-        {
-          "theme": "VIDEO GAME CHARACTERS",
-          "words": [
-            "LINK",
-            "SONIC",
-            "CRASH",
-            "MARIO"
-          ]
-        }
-      ]
-    },
-    "14": {
-      "gameId": 14,
-      "totalPlayers": 1,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": 0.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "BIRD SOUNDS",
-          "words": [
-            "TWEET",
-            "CAW",
-            "CHIRP",
-            "CLUCK"
-          ]
-        },
-        {
-          "theme": "COLORS",
-          "words": [
-            "BROWN",
-            "PINK",
-            "VIOLET",
-            "TURQUOISE"
-          ]
-        },
-        {
-          "theme": "FISHING GEAR",
-          "words": [
-            "ROD",
-            "TACKLE",
-            "REEL",
-            "LURE"
-          ]
-        },
-        {
-          "theme": "FICTIONAL PIRATES",
-          "words": [
-            "SILVER",
-            "SPARROW",
-            "HOOK",
-            "JONES"
-          ]
-        }
-      ]
-    },
-    "15": {
-      "gameId": 15,
-      "totalPlayers": 1,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": 0.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "COFFEE DRINKS",
-          "words": [
-            "ESPRESSO",
-            "LATTE",
-            "AMERICANO",
-            "CAPPUCCINO"
-          ]
-        },
-        {
-          "theme": "TREE NUTS",
-          "words": [
-            "ALMOND",
-            "PECAN",
-            "WALNUT",
-            "CASHEW"
-          ]
-        },
-        {
-          "theme": "SHADES OF GREEN",
-          "words": [
-            "FOREST",
-            "KELLY",
-            "EMERALD",
-            "OLIVE"
-          ]
-        },
-        {
-          "theme": "MR. ___",
-          "words": [
-            "BEAN",
-            "CLEAN",
-            "PEANUT",
-            "FOX"
-          ]
-        }
-      ]
-    },
-    "16": {
-      "gameId": 16,
-      "totalPlayers": 0,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": 0.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "NECKWEAR",
-          "words": [
-            "SCARF",
-            "ASCOT",
-            "BOLO",
-            "TIE"
-          ]
-        },
-        {
-          "theme": "SHIP DIRECTIONS",
-          "words": [
-            "STERN",
-            "BOW",
-            "PORT",
-            "STARBOARD"
-          ]
-        },
-        {
-          "theme": "DETERGENTS",
-          "words": [
-            "TIDE",
-            "GAIN",
-            "ERA",
-            "ALL"
-          ]
-        },
-        {
-          "theme": "___ TRIANGLE",
-          "words": [
-            "BERMUDA",
-            "LOVE",
-            "RIGHT",
-            "ACUTE"
-          ]
-        }
-      ]
-    },
-    "17": {
-      "gameId": 17,
-      "totalPlayers": 2,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": -4.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "\"MUSCLES, INFORMALLY\"",
-          "words": [
-            "QUAD",
-            "LAT",
-            "TRI",
-            "PEC"
-          ]
-        },
-        {
-          "theme": "AWARDS",
-          "words": [
-            "CUP",
-            "RIBBON",
-            "MEDAL",
-            "TROPHY"
-          ]
-        },
-        {
-          "theme": "TITLE TV DOCTORS",
-          "words": [
-            "GREY",
-            "HOUSE",
-            "QUINN",
-            "HOWSER"
-          ]
-        },
-        {
-          "theme": "NFL PLAYERS",
-          "words": [
-            "BILL",
-            "BEAR",
-            "COMMANDER",
-            "BROWN"
-          ]
-        }
-      ]
-    },
-    "18": {
-      "gameId": 18,
-      "totalPlayers": 2,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": -4.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "OFF-WHITE SHADES",
-          "words": [
-            "CREAM",
-            "EGGSHELL",
-            "VANILLA",
-            "IVORY"
-          ]
-        },
-        {
-          "theme": "ANTI-VAMPIRE",
-          "words": [
-            "GARLIC",
-            "MIRROR",
-            "STAKE",
-            "CRUCIFIX"
-          ]
-        },
-        {
-          "theme": "KINDS OF MEAT",
-          "words": [
-            "PORK",
-            "BEEF",
-            "POULTRY",
-            "VENISON"
-          ]
-        },
-        {
-          "theme": "SYNONYMS FOR ARGUMENT",
-          "words": [
-            "ROW",
-            "SPAT",
-            "TIFF",
-            "QUARREL"
-          ]
-        }
-      ]
-    },
-    "19": {
-      "gameId": 19,
-      "totalPlayers": 1,
-      "finishedPlayers": 0,
-      "wonPlayers": 0,
-      "totalScore": 0.0,
-      "concluded": true,
-      "groups": [
-        {
-          "theme": "GRAINS",
-          "words": [
-            "OAT",
-            "BARLEY",
-            "SPELT",
-            "RYE"
-          ]
-        },
-        {
-          "theme": "ROYAL AND NOBLE TITLES",
-          "words": [
-            "KING",
-            "EARL",
-            "BARON",
-            "PRINCE"
-          ]
-        },
-        {
-          "theme": "UNIVERSITIES",
-          "words": [
-            "RICE",
-            "DUKE",
-            "BROWN",
-            "HOWARD"
-          ]
-        },
-        {
-          "theme": "BEST DIRECTOR OSCAR WINNERS",
-          "words": [
-            "STONE",
-            "BONG",
-            "FORD",
-            "LEE"
           ]
         }
       ]
