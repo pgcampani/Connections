@@ -3,10 +3,10 @@ package messages.requests;
 public class RegisterMessage{
     public String operation = "register"; 
     public String name; 
-    public String password; 
+    public String psw; 
 
-    public RegisterMessage(String name, String password){
+    public RegisterMessage(String name, String psw){
         this.name = name; 
-        this.password = password; 
+        this.psw = psw; 
     }
 }

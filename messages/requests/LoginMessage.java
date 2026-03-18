@@ -4,12 +4,12 @@ public class LoginMessage{
 
     public String operation = "login"; 
     public String username;
-    public String password; 
+    public String psw; 
     public int udpPort;
     
-    public LoginMessage(String username, String password, int udpPort){
+    public LoginMessage(String username, String psw, int udpPort){
         this.username = username; 
-        this.password = password; 
+        this.psw = psw; 
         this.udpPort = udpPort; 
     }
 }

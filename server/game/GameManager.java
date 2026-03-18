@@ -21,11 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameManager{
     private final UserManager userManager; 
     private final GameLoader gameLoader; 
+    // Scheduler per avvio di nuove partite
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); 
     private final int gameDuration; 
     private Game currentGame; 
     private List<String> shuffledWords; 
-    private ConcurrentHashMap<Integer, GameStats> gameStats = new ConcurrentHashMap<>(); 
+    private ConcurrentHashMap<Integer, GameStats> gameStats = new ConcurrentHashMap<>(); // Statistiche partita
     private final String stateFile; 
     private final UDPNotifier udpNotifier; 
 
@@ -44,8 +45,8 @@ public class GameManager{
         scheduler.scheduleAtFixedRate(this::startNewGame, 0, gameDuration, TimeUnit.SECONDS);
     }
 
+    // Avvio di una nuova partita
     private synchronized void startNewGame(){
-
         // Chiudo la partita precedente e aggiorna i valori dei giocatori
         endGame(); 
 
@@ -90,6 +91,7 @@ public class GameManager{
         }
     }
 
+    // Arresto dello scheduler
     public void stop(){
         scheduler.shutdown();
 
@@ -100,6 +102,7 @@ public class GameManager{
         }
     }
 
+    // Salvataggio stato corrente
     public synchronized void saveState(String stateFile){
         try(FileWriter writer = new FileWriter(stateFile)){
             JsonUtils.GSON_PRETTY.toJson(new GameManagerState(gameLoader.getNextGameIndex(), gameStats), writer);
@@ -116,6 +119,7 @@ public class GameManager{
         return shuffledWords; 
     }
 
+    // Metodo che restituisce informazioni sulle partite - accetta anche -1 per la partita corrente
     public synchronized GameInfoResponse getGameInfo(String username, int gameId){
     
         if(gameId == -1 || (currentGame != null && currentGame.gameId == gameId)){
@@ -124,17 +128,21 @@ public class GameManager{
                 return GameInfoResponse.error("NO_GAME", "Nessuna partita in corso"); 
             }
 
+            // Recuperiamo lo stato dell'utente
             User user = userManager.getUser(username); 
             PlayerGameState state = user.currentGameState;
 
             if(state == null || state.gameId != currentGame.gameId){
+                // Utente non registrato nella partita- creaiamo nuovo PlayerGameState da associare all'utente
                 state = new PlayerGameState(currentGame.gameId);
                 user.currentGameState = state; 
                 gameStats.computeIfAbsent(currentGame.gameId, GameStats::new).addPlayer(); 
             }
 
+            // Tempo rimanente per partita corrente
             long timeRemaining = currentGame.endTime - System.currentTimeMillis(); 
 
+            // Forniamo anche la lista delle parole ancora non indovinate
             List<String> remainingWords = new ArrayList<>(shuffledWords); 
             for(Group group : state.correctGroups){
                 remainingWords.removeAll(group.words);
@@ -151,6 +159,7 @@ public class GameManager{
 
         User targetUser = userManager.getUser(username);
         PlayerGameState pastState = targetUser.pastGames.get(gameId);
+        // Verifichiamo se l'utente ha partecipato alla partita richiesta
         if(pastState == null){
             return GameInfoResponse.error("NOT_PLAYED", "Non hai partecipato a questa partita");
         }
@@ -158,12 +167,13 @@ public class GameManager{
         return GameInfoResponse.concluded(stats.groups, pastState.correctGroups.size(), pastState.errors, pastState.score); 
     }
 
-
+    // Gestisce l'invio di una proposta di 4 parole
     public synchronized String submitProposal(String username, List<String> words){
         if(currentGame == null){
             return "NO_GAME"; 
         }
 
+        // Recupero stato utente
         User user = userManager.getUser(username); 
         PlayerGameState state = user.currentGameState;
 
@@ -176,6 +186,7 @@ public class GameManager{
         }
 
         if(words.size() != 4){
+            // Deve inviare esattamente 4 parole
             return "INVALID_PROPOSAL";
         }
 
@@ -186,6 +197,7 @@ public class GameManager{
             allWords.addAll(group.words);
         }
 
+        // Verifichiamo che le parole inviate appartengano alla partita corrente
         if(!allWords.containsAll(words)){
             return "INVALID_PROPOSAL";
         }
@@ -194,6 +206,7 @@ public class GameManager{
             return "GAME_FINISHED";
         }
 
+        // Controlliamo se il gruppo di parole è già stato indovinato dall'utente
         for(Group correctGroup : state.correctGroups){
             if(correctGroup.words.containsAll(words)){
                 return "INVALID_PROPOSAL";
@@ -207,8 +220,6 @@ public class GameManager{
                 state.correctGroups.add(group);
                 state.score += 6;
 
-                System.out.println("Punteggio corrente di " + username + " e' " + state.score);
-
                 if(state.hasWon()){
                     // Se ho vinto il quarto gruppo viene dato in automatico e aggiunto alla lista dei gruppi indovinati
                     for(Group remaining : currentGame.groups){
@@ -217,13 +228,14 @@ public class GameManager{
                             break; 
                         }
                     }
+                    // Partita finita per quel giocatore
                     state.finished = true;
                     
                     GameStats stats = gameStats.get(currentGame.gameId);
                     if(stats != null){
                         stats.finalizePlayer(true, state.score, state.finished);
                     }
-                    
+                    // Aggiorna statische utente
                     userManager.finalizeWin(username, state);
 
                     return "WON";

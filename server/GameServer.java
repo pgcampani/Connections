@@ -27,17 +27,22 @@ public class GameServer{
     }
 
     public void start(){
+        // Configurazione server
         int tcp_port = config.getTcpPort();
         int threadPoolSize = config.getPoolSize();
         int persistenceInterval = config.getPersistenceInterval(); 
         int gameDuration = config.getGameDuration(); 
+
         UserManager userManager = new UserManager(config.getUsersFile()); 
+        
         int nextGameIndex = 0;
         ConcurrentHashMap<Integer, GameStats> gameStats = null; 
+        
         File stateFile = new File(config.getGameStateFile());
         
         if(stateFile.exists()){
             try(FileReader reader = new FileReader(stateFile)){
+                // Ripristino dello stato partita
                 GameManagerState state = JsonUtils.GSON.fromJson(reader, GameManagerState.class);
                 if(state != null){
                     nextGameIndex = state.nextGameIndex; 
@@ -61,6 +66,7 @@ public class GameServer{
 
         threadPool = Executors.newFixedThreadPool(threadPoolSize);
 
+        // Scheduler per salvataggio periodico dello stato
         scheduler = Executors.newScheduledThreadPool(1); 
         scheduler.scheduleAtFixedRate(new PersistenceTask(userManager,gameManager, config.getGameStateFile()), persistenceInterval, persistenceInterval, TimeUnit.SECONDS); 
         

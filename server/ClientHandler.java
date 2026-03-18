@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable{
                         loggedUsername = null; 
                         break; 
                     
-                    case "updateCredential":
+                    case "updateCredentials":
                         loggedUsername = handleUpdateCredential(loggedUsername, message, out);
                         break; 
                     
@@ -115,7 +115,7 @@ public class ClientHandler implements Runnable{
     private void handleRegister(String message, PrintWriter out){
         RegisterMessage request = JsonUtils.GSON.fromJson(message, RegisterMessage.class);
 
-        if(userManager.register(request.name.trim(), request.password.trim())){
+        if(userManager.register(request.name.trim(), request.psw.trim())){
             NetworkUtils.TCPsend(out, new ServerResponse("OK", "Registrazione avvenuta con successo"));
         }
         else{
@@ -126,7 +126,7 @@ public class ClientHandler implements Runnable{
     // Gestisce login di un utente - invia info partita corrente e registra indirizzo UDP
     private String handleLogin(String message, PrintWriter out){
         LoginMessage request = JsonUtils.GSON.fromJson(message, LoginMessage.class);
-        String result = userManager.login(request.username.trim(), request.password.trim()); 
+        String result = userManager.login(request.username.trim(), request.psw.trim()); 
 
        switch(result){
         case "OK": 
@@ -175,13 +175,14 @@ public class ClientHandler implements Runnable{
 
         UpdateCredentialMessage request = JsonUtils.GSON.fromJson(message, UpdateCredentialMessage.class);
 
-        String result = userManager.updateCredential(loggedUsername, request.old_username, request.old_psw, request.new_username, request.new_psw);
+        String result = userManager.updateCredential(loggedUsername, request.oldName, request.oldPsw, request.newName, request.newPsw);
 
         switch(result){
             case "OK":
                 NetworkUtils.TCPsend(out, new ServerResponse("OK", "Credenziali aggiornate"));
-                if(request.new_username != null){
-                    return request.new_username;
+                if(request.newName != null){
+                    // Restituisce il nuovo username
+                    return request.newName;
                 }
                 else{
                     return loggedUsername; 
@@ -208,6 +209,7 @@ public class ClientHandler implements Runnable{
                 break; 
 
             default:
+                NetworkUtils.TCPsend(out, new ServerResponse("ERROR", "Errore nell'aggiornamento credenziali"));
                 break;
         }
 

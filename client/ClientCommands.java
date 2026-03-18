@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.ArrayList; 
 
 public class ClientCommands{
+    
+    // Registrazione di un nuovo utente
     public static void  handleRegister(Scanner scanner, SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
         System.out.print("Username ");
         String username = scanner.nextLine().trim(); 
@@ -38,6 +40,7 @@ public class ClientCommands{
         } 
     }
 
+    // Login utente - se ha successo apre socket UDP e la restituisce al chiamante
     public static DatagramSocket handleLogin(Scanner scanner, SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
         System.out.print("Username ");
         String username = scanner.nextLine().trim(); 
@@ -49,6 +52,7 @@ public class ClientCommands{
             return null; 
         }
 
+        // Socket UDP su porta effimera
         DatagramSocket udpSocket = new DatagramSocket(0); 
         int udpPort = udpSocket.getLocalPort(); 
 
@@ -90,6 +94,7 @@ public class ClientCommands{
         }
     }
 
+    // Logout utente
     public static boolean handleLogout(SocketChannel socketChannel, ByteBuffer write_b, ByteBuffer read_b) throws IOException{
         NetworkUtils.NIOsend(socketChannel, write_b, new LogoutMessage());
 

@@ -21,20 +21,23 @@ public class ClientMain{
 
         // Apro canale TCP verso il server - chiuso automaticamente dal try-with-resources
         try(SocketChannel socketChannel = SocketChannel.open()){
-            socketChannel.configureBlocking(true); 
+            socketChannel.configureBlocking(true);  // Modalità bloccante 
             socketChannel.connect(new InetSocketAddress(server_host, server_tcp_port)); 
 
             // Buffer per invio e ricezione
             ByteBuffer write_buffer = ByteBuffer.allocate(1024); 
             ByteBuffer read_buffer = ByteBuffer.allocate(1024); 
+            
             Scanner scanner = new Scanner(System.in); 
 
+            // Comandi iniziali disponibili
             System.out.println("Comandi disponibili:");
             System.out.println(">  register");
             System.out.println(">  login");
             System.out.println(">  exit");
 
-           while(true){ 
+            // Ciclo principale - gestione comandi utente
+            while(true){ 
                 System.out.print(">  "); 
                 if(!scanner.hasNextLine()){
                     System.out.println("Connessione chiusa.");
@@ -45,6 +48,7 @@ public class ClientMain{
                 // Parsing dei comandi
                 if(input.isEmpty()) continue; 
                 
+                // Comandi utente non loggato
                 if(!is_logged){
                     switch(input){
                         case "register":
@@ -85,6 +89,7 @@ public class ClientMain{
                     }
                 }
                 else{
+                    // Comandi utente loggato
                     switch(input){
                         case "register":
                             System.out.println("Utente già registrato"); 

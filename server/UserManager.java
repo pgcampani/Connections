@@ -29,6 +29,7 @@ public class UserManager{
         loadUsers(); 
     }
 
+    // Registrazione utente
     public boolean register(String username, String password){
         
         User newUser = new User(password); 
@@ -44,6 +45,7 @@ public class UserManager{
         return true; 
     }
 
+    // Login utente
     public String login(String username, String password){
         
         User user = users.get(username); 
@@ -52,6 +54,7 @@ public class UserManager{
             return "USER_NOT_FOUND"; 
         }
 
+        // Lock su utente
         synchronized(user){
             if(user.isLogged){
                 return "USER_ALREADY_LOGGED"; 
@@ -64,17 +67,18 @@ public class UserManager{
         return "OK"; 
     }
 
+    // Logout utente
     public void logout(String username){
         User user = users.get(username); 
 
         if(user == null) return; 
 
         synchronized (user){
+            // Mantiene coerenza tra stato utente e registrazione UDP
             user.currentGameid = -1;
             user.isLogged = false;  
+            unregisterUdpClient(username);
         }
-
-        unregisterUdpClient(username);
     }
 
     // Logout di tutti gli utenti - per shutdown del server
@@ -83,8 +87,8 @@ public class UserManager{
             synchronized(user){
                 user.isLogged = false;
                 user.currentGameid = -1; 
+                unregisterUdpClient(user.username);
             }
-            unregisterUdpClient(user.username);
         }
     }
 
@@ -93,16 +97,16 @@ public class UserManager{
         if(loggedUsername == null || !loggedUsername.equals(old_username)){
             return "UNAUTHORIZED";
         }
-
-        User user = users.get(old_username);
-        if (user == null) return "USER_NOT_FOUND";
-
-        synchronized (user) {
-            // 2. Controllo password attuale
+        
+        synchronized (this){
+            User user = users.get(old_username);
+            if (user == null) return "USER_NOT_FOUND";
+            
+            // Controllo password attuale
             if(!user.password.equals(old_psw)){
                 return "WRONG_PASSWORD";
             }
-            // Caso 1: Cambio SOLO password (new_username è null o uguale al vecchio)
+            // Cambio password (new_username è null o uguale al vecchio)
             if(new_username == null || new_username.equals(old_username)){
                 if(new_psw != null){
                     user.password = new_psw;
@@ -112,13 +116,12 @@ public class UserManager{
                 }
             } 
             else{
-                // Tenta di occupare il nuovo nome in modo atomico sulla mappa
-                User existing = users.putIfAbsent(new_username, user);
-                if(existing != null){
+                if(users.containsKey(new_username)){
                     return "USERNAME_TAKEN";
                 }
-                // Rinomina riuscita: liberiamo il vecchio nome
+                // Aggiornamento riuscito: liberiamo il vecchio nome
                 users.remove(old_username);
+                users.put(new_username, user);
                 user.username = new_username;
 
                 // Aggiorna anche indirizzo UDP a cui inviare notifiche asaincrone
@@ -132,7 +135,6 @@ public class UserManager{
                 }
             }
         }
-        // Salvataggio persistente
         saveUsers();
         return "OK";
     }
@@ -237,6 +239,7 @@ public class UserManager{
         }
     }
 
+    // Crea una lista ordinata in ordine decrescente per stilare la classifica
     public List<User> getLeaderboard(String playerName, int topPlayers){
         List<User> leaderboard = new ArrayList<>(users.values());
         Collections.sort(leaderboard, (a,b) -> b.totalScore - a.totalScore);

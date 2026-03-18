@@ -11,7 +11,7 @@ import java.net.SocketException;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.StandardCharsets;
 
-
+// Thread per ricezione delle notifiche UDP dal server
 public class UDPListener implements Runnable{
     private final DatagramSocket udpSocket; 
 
@@ -21,15 +21,20 @@ public class UDPListener implements Runnable{
 
     @Override
     public void run(){
+        // Buffer ricezione pacchetti
         byte[] buffer = new byte[65535];
 
         try{
+            // Continuiamo finchè il socket è aperto
             while(!udpSocket.isClosed()){
+                // pacchetto associato al buffer
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 try {
+                    // attesa messaggio UDP - bloccante
                     udpSocket.receive(packet);  
                 } 
                 catch(SocketException e){
+                    // Socket chiuso dal main
                     break;
                 }
 
@@ -37,6 +42,7 @@ public class UDPListener implements Runnable{
                 JsonObject obj = JsonUtils.GSON.fromJson(json, JsonObject.class);
                 String type = obj.get("type").getAsString();
 
+                // Verifichiamo se messaggio di fine partite o inizio partita
                 if(type.equals("GAME_END")){
                     GameEndNotification notification = JsonUtils.GSON.fromJson(json, GameEndNotification.class);
                     printGameEnd(notification);
