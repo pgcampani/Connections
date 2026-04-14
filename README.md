@@ -40,7 +40,7 @@ La comunicazione avviene tramite:
 - `Statistiche giocatore`: win/loss rate, streak, distribuzione errori
 
 ## Struttura del progetto
-
+```text
 progetto_lab3/
 ├── server/                     # File sorgente server
 │   ├── game/                   # Logica di gioco (GameManager, GameLoader, ...)
@@ -76,6 +76,7 @@ progetto_lab3/
 ├── ServerMain.jar
 ├── ClientMain.jar
 └── relazione-laboratorio3-Campani-585480.pdf
+```
 
 ## Compilazione 
 ### Server
