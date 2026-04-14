@@ -9,6 +9,7 @@ La comunicazione avviene tramite:
 - `UDP` per notifiche asincrone (inizio nuova partita, risultati finali)
 
 ## Architettura 
+```text
 ┌─────────────────────────────────────────────────────────┐
 │                        SERVER                           │
 │                                                         │
@@ -28,6 +29,7 @@ La comunicazione avviene tramite:
 │  ClientMain (Main Thread) ←→ TCP ←→ Server              │
 │       └── UDPListener (Daemon Thread) ← UDP             │
 └─────────────────────────────────────────────────────────┘
+```
 
 ## Funzionalità 
 - `Round globali`: tutti i giocatori condividono la stessa partita
@@ -46,30 +48,30 @@ progetto_lab3/
 │   ├── GameServer.java
 │   ├── ClientHandler.java
 │   ├── UserManager.java
-|   ├── ServerConfig.java
-|   ├── PersistenceTask.java
-|   ├── User.java
-|   ├── UserManager.java
+│   ├── ServerConfig.java
+│   ├── PersistenceTask.java
+│   ├── User.java
 │   └── UDPNotifier.java
+│
 ├── client/                     # File sorgente client
 │   ├── ClientMain.java
 │   ├── ClientCommands.java
 │   └── UDPListener.java
-│   
-├── messages/                   # Classi di messaggi condivise
+│
+├── messages/                   # Classi condivise
 │   ├── requests/
-|   ├── responses/
-|   ├── Group.java
-|   ├── JsonUtils.java
+│   ├── responses/
+│   ├── Group.java
+│   ├── JsonUtils.java
 │   └── NetworkUtils.java
-|
+│
 ├── config/
 │   ├── ServerConfig.properties
 │   └── ClientConfig.properties
-|
+│
 ├── data/
 │   └── Connections_Data.json   # Dati di gioco (911 round)
-|
+│
 ├── gson-2.13.2.jar
 ├── ServerMain.jar
 ├── ClientMain.jar
